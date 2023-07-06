@@ -21,6 +21,8 @@
 #include "APP/hidconsumer.h"
 #include "Profile/hidconsumerservice.h"
 
+#include "vqftest.h"
+
 /*********************************************************************
  * MACROS
  */
@@ -243,6 +245,8 @@ void HidEmu_Init()
 
     // Setup a delayed profile startup
     tmos_set_event(hidEmuTaskId, START_DEVICE_EVT);
+
+    vqftest_setup();
 }
 
 /*********************************************************************
@@ -315,6 +319,9 @@ uint16_t HidEmu_ProcessEvent(uint8_t task_id, uint16_t events)
         hidEmuSendConsumerReport(0, 0);
 
         tmos_start_task(hidEmuTaskId, START_REPORT_EVT, 1600);
+        
+        vqftest_run();
+
         return (events ^ START_REPORT_EVT);
     }
     return 0;
