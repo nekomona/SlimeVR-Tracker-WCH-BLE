@@ -1,0 +1,17 @@
+{
+    "name": "CH58xBLE",
+    "authors": {
+        "name": "WCH"
+    },
+    "version": "1.0.0",
+    "platforms": [
+        "ch32v"
+    ],
+    "frameworks": "*",
+    "build": {
+        "flags": [
+            "-L.",
+            "-lch58xble"
+        ]
+    }
+}
