@@ -23,14 +23,14 @@ float fake_mag[3] = {0.3f, 0.4f, 0.1f};
 float quat_out[4];
 
 // Define calibration (replace with actual calibration data if available)
-const FusionMatrix gyroscopeMisalignment = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-const FusionVector gyroscopeSensitivity = {1.0f, 1.0f, 1.0f};
-const FusionVector gyroscopeOffset = {0.0f, 0.0f, 0.0f};
-const FusionMatrix accelerometerMisalignment = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-const FusionVector accelerometerSensitivity = {1.0f, 1.0f, 1.0f};
-const FusionVector accelerometerOffset = {0.0f, 0.0f, 0.0f};
-const FusionMatrix softIronMatrix = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
-const FusionVector hardIronOffset = {0.0f, 0.0f, 0.0f};
+FusionMatrix gyroscopeMisalignment = {1.0f, 0.1f, 0.1f, 0.1f, 1.0f, 0.1f, 0.1f, 0.1f, 1.0f};
+FusionVector gyroscopeSensitivity = {1.0f, 1.0f, 1.1f};
+FusionVector gyroscopeOffset = {0.1f, 0.1f, 0.1f};
+FusionMatrix accelerometerMisalignment = {1.0f, 0.1f, 0.1f, 0.1f, 1.0f, 0.1f, 0.1f, 0.1f, 1.0f};
+FusionVector accelerometerSensitivity = {1.0f, 1.1f, 1.0f};
+FusionVector accelerometerOffset = {0.1f, 0.1f, 0.1f};
+FusionMatrix softIronMatrix = {1.0f, 0.1f, 0.1f, 0.1f, 1.0f, 0.1f, 0.1f, 0.1f, 1.0f};
+FusionVector hardIronOffset = {0.1f, 0.1f, 0.1f};
 
 // Initialise algorithms
 FusionOffset offset;

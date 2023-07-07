@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], double gyrTs)
+// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], float gyrTs)
 // Removed batch update functions
 
 #include "vqf.h"
@@ -73,7 +73,7 @@ VQF::VQF(const VQFParams &params, vqf_real_t gyrTs, vqf_real_t accTs, vqf_real_t
     setup();
 }
 
-void VQF::updateGyr(const vqf_real_t gyr[3], double gyrTs)
+void VQF::updateGyr(const vqf_real_t gyr[3], float gyrTs)
 {
     // rest detection
     if (params.restBiasEstEnabled || params.magDistRejectionEnabled) {
@@ -147,8 +147,8 @@ void VQF::updateAcc(const vqf_real_t acc[3])
     vqf_real_t q_w = sqrt((accEarth[2]+1)/2);
     if (q_w > 1e-6) {
         accCorrQuat[0] = q_w;
-        accCorrQuat[1] = 0.5*accEarth[1]/q_w;
-        accCorrQuat[2] = -0.5*accEarth[0]/q_w;
+        accCorrQuat[1] = 0.5f*accEarth[1]/q_w;
+        accCorrQuat[2] = -0.5f*accEarth[0]/q_w;
         accCorrQuat[3] = 0;
     } else {
         // to avoid numeric issues when acc is close to [0 0 -1], i.e. the correction step is close (<= 0.00011°) to 180°:
@@ -327,7 +327,7 @@ void VQF::updateMag(const vqf_real_t mag[3])
         // new magnetic field acceptance
         if (fabs(state.magNormDip[0] - state.magCandidateNorm) < params.magNormTh*state.magCandidateNorm
                 && fabs(state.magNormDip[1] - state.magCandidateDip) < params.magDipTh*vqf_real_t(M_PI/180.0)) {
-            if (norm(state.restLastGyrLp, 3) >= params.magNewMinGyr*M_PI/180.0) {
+            if (norm(state.restLastGyrLp, 3) >= params.magNewMinGyr*vqf_real_t(M_PI/180.0)) {
                 state.magCandidateT += coeffs.magTs;
             }
             state.magCandidateNorm += coeffs.kMagRef*(state.magNormDip[0] - state.magCandidateNorm);
@@ -537,8 +537,8 @@ void VQF::setTauAcc(vqf_real_t tauAcc)
         return;
     }
     params.tauAcc = tauAcc;
-    double newB[3];
-    double newA[3];
+    float newB[3];
+    float newA[3];
 
     filterCoeffs(params.tauAcc, coeffs.accTs, newB, newA);
     filterAdaptStateForCoeffChange(state.lastAccLp, 3, coeffs.accLpB, coeffs.accLpA, newB, newA, state.accLpState);
@@ -731,24 +731,24 @@ vqf_real_t VQF::gainFromTau(vqf_real_t tau, vqf_real_t Ts)
     }
 }
 
-void VQF::filterCoeffs(vqf_real_t tau, vqf_real_t Ts, double outB[], double outA[])
+void VQF::filterCoeffs(vqf_real_t tau, vqf_real_t Ts, float outB[], float outA[])
 {
     assert(tau > 0);
     assert(Ts > 0);
     // second order Butterworth filter based on https://stackoverflow.com/a/52764064
-    double fc = (M_SQRT2 / (2.0*M_PI))/double(tau); // time constant of dampened, non-oscillating part of step response
-    double C = tan(M_PI*fc*double(Ts));
-    double D = C*C + sqrt(2)*C + 1;
-    double b0 = C*C/D;
+    float fc = float(M_SQRT2 / (2.0*M_PI))/float(tau); // time constant of dampened, non-oscillating part of step response
+    float C = tanf(float(M_PI)*fc*float(Ts));
+    float D = C*C + sqrtf(2)*C + 1;
+    float b0 = C*C/D;
     outB[0] = b0;
     outB[1] = 2*b0;
     outB[2] = b0;
     // a0 = 1.0
     outA[0] = 2*(C*C-1)/D; // a1
-    outA[1] = (1-sqrt(2)*C+C*C)/D; // a2
+    outA[1] = (1-sqrtf(2)*C+C*C)/D; // a2
 }
 
-void VQF::filterInitialState(vqf_real_t x0, const double b[3], const double a[2], double out[])
+void VQF::filterInitialState(vqf_real_t x0, const float b[3], const float a[2], float out[])
 {
     // initial state for steady state (equivalent to scipy.signal.lfilter_zi, obtained by setting y=x=x0 in the filter
     // update equation)
@@ -756,9 +756,9 @@ void VQF::filterInitialState(vqf_real_t x0, const double b[3], const double a[2]
     out[1] = x0*(b[2] - a[1]);
 }
 
-void VQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const double b_old[],
-                                         const double a_old[], const double b_new[],
-                                         const double a_new[], double state[])
+void VQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const float b_old[],
+                                         const float a_old[], const float b_new[],
+                                         const float a_new[], float state[])
 {
     if (isnan(state[0])) {
         return;
@@ -769,18 +769,18 @@ void VQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const do
     }
 }
 
-vqf_real_t VQF::filterStep(vqf_real_t x, const double b[3], const double a[2], double state[2])
+vqf_real_t VQF::filterStep(vqf_real_t x, const float b[3], const float a[2], float state[2])
 {
     // difference equations based on scipy.signal.lfilter documentation
     // assumes that a0 == 1.0
-    double y = b[0]*x + state[0];
+    float y = b[0]*x + state[0];
     state[0] = b[1]*x - a[0]*y + state[1];
     state[1] = b[2]*x - a[1]*y;
     return y;
 }
 
-void VQF::filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const double b[3],
-                    const double a[2], double state[], vqf_real_t out[])
+void VQF::filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const float b[3],
+                    const float a[2], float state[], vqf_real_t out[])
 {
     assert(N>=2);
 
@@ -873,17 +873,17 @@ void VQF::matrix3MultiplyTpsSecond(const vqf_real_t in1[9], const vqf_real_t in2
 bool VQF::matrix3Inv(const vqf_real_t in[9], vqf_real_t out[9])
 {
     // in = [a b c; d e f; g h i]
-    double A = in[4]*in[8] - in[5]*in[7]; // (e*i - f*h)
-    double D = in[2]*in[7] - in[1]*in[8]; // -(b*i - c*h)
-    double G = in[1]*in[5] - in[2]*in[4]; // (b*f - c*e)
-    double B = in[5]*in[6] - in[3]*in[8]; // -(d*i - f*g)
-    double E = in[0]*in[8] - in[2]*in[6]; // (a*i - c*g)
-    double H = in[2]*in[3] - in[0]*in[5]; // -(a*f - c*d)
-    double C = in[3]*in[7] - in[4]*in[6]; // (d*h - e*g)
-    double F = in[1]*in[6] - in[0]*in[7]; // -(a*h - b*g)
-    double I = in[0]*in[4] - in[1]*in[3]; // (a*e - b*d)
+    float A = in[4]*in[8] - in[5]*in[7]; // (e*i - f*h)
+    float D = in[2]*in[7] - in[1]*in[8]; // -(b*i - c*h)
+    float G = in[1]*in[5] - in[2]*in[4]; // (b*f - c*e)
+    float B = in[5]*in[6] - in[3]*in[8]; // -(d*i - f*g)
+    float E = in[0]*in[8] - in[2]*in[6]; // (a*i - c*g)
+    float H = in[2]*in[3] - in[0]*in[5]; // -(a*f - c*d)
+    float C = in[3]*in[7] - in[4]*in[6]; // (d*h - e*g)
+    float F = in[1]*in[6] - in[0]*in[7]; // -(a*h - b*g)
+    float I = in[0]*in[4] - in[1]*in[3]; // (a*e - b*d)
 
-    double det = in[0]*A + in[1]*B + in[2]*C; // a*A + b*B + c*C;
+    float det = in[0]*A + in[1]*B + in[2]*C; // a*A + b*B + c*C;
 
     if (det >= -EPS && det <= EPS) {
         std::fill(out, out+9, 0);

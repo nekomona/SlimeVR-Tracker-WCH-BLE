@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], double gyrTs)
+// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], float gyrTs)
 // Removed batch update functions
 
 #ifndef BASICVQF_HPP
@@ -17,12 +17,12 @@
 /**
  * @brief Typedef for the floating-point data type used for most operations.
  *
- * By default, all floating-point calculations are performed using `double`. Set the `VQF_SINGLE_PRECISION` define to
- * change this type to `float`. Note that the Butterworth filter implementation will always use double precision as
+ * By default, all floating-point calculations are performed using `float`. Set the `VQF_SINGLE_PRECISION` define to
+ * change this type to `float`. Note that the Butterworth filter implementation will always use float precision as
  * using floats can cause numeric issues.
  */
 #ifndef VQF_SINGLE_PRECISION
-typedef double vqf_real_t;
+typedef float vqf_real_t;
 #else
 typedef float vqf_real_t;
 #endif
@@ -103,7 +103,7 @@ struct BasicVQFState {
     /**
      * @brief Internal low-pass filter state for #lastAccLp.
      */
-    double accLpState[3*2];
+    float accLpState[3*2];
 
     /**
      * @brief Gain used for heading correction to ensure fast initial convergence.
@@ -141,13 +141,13 @@ struct BasicVQFCoefficients
      *
      * The array contains \f$\begin{bmatrix}b_0 & b_1 & b_2\end{bmatrix}\f$.
      */
-    double accLpB[3];
+    float accLpB[3];
     /**
      * @brief Denominator coefficients of the acceleration low-pass filter.
      *
      * The array contains \f$\begin{bmatrix}a_1 & a_2\end{bmatrix}\f$ and \f$a_0=1\f$.
      */
-    double accLpA[2];
+    float accLpA[2];
 
     /**
      * @brief Gain of the first-order filter used for heading correction.
@@ -249,7 +249,7 @@ public:
      *
      * @param gyr gyroscope measurement in rad/s
      */
-    void updateGyr(const vqf_real_t gyr[3], double gyrTs);
+    void updateGyr(const vqf_real_t gyr[3], float gyrTs);
     /**
      * @brief Performs accelerometer update step.
      *
@@ -417,7 +417,7 @@ public:
      * @param outB output array for numerator coefficients
      * @param outA output array for denominator coefficients (without \f$a_0=1\f$)
      */
-    static void filterCoeffs(vqf_real_t tau, vqf_real_t Ts, double outB[3], double outA[2]);
+    static void filterCoeffs(vqf_real_t tau, vqf_real_t Ts, float outB[3], float outA[2]);
     /**
      * @brief Calculates the initial filter state for a given steady-state value.
      * @param x0 steady state value
@@ -425,7 +425,7 @@ public:
      * @param a denominator coefficients (without \f$a_0=1\f$)
      * @param out output array for filter state
      */
-    static void filterInitialState(vqf_real_t x0, const double b[], const double a[], double out[2]);
+    static void filterInitialState(vqf_real_t x0, const float b[], const float a[], float out[2]);
     /**
      * @brief Adjusts the filter state when changing coefficients.
      *
@@ -441,9 +441,9 @@ public:
      * @param a_new new denominator coefficients (without \f$a_0=1\f$)
      * @param state filter state (array of size N*2, will be modified)
      */
-    static void filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const double b_old[3],
-                                               const double a_old[2], const double b_new[3],
-                                               const double a_new[2], double state[]);
+    static void filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const float b_old[3],
+                                               const float a_old[2], const float b_new[3],
+                                               const float a_new[2], float state[]);
     /**
      * @brief Performs a filter step for a scalar value.
      * @param x input value
@@ -452,7 +452,7 @@ public:
      * @param state filter state array (will be modified)
      * @return filtered value
      */
-    static vqf_real_t filterStep(vqf_real_t x, const double b[3], const double a[2], double state[2]);
+    static vqf_real_t filterStep(vqf_real_t x, const float b[3], const float a[2], float state[2]);
     /**
      * @brief Performs filter step for vector-valued signal with averaging-based initialization.
      *
@@ -469,8 +469,8 @@ public:
      * @param state filter state (array of size N*2, will be modified)
      * @param out output array for filtered values (size N)
      */
-    static void filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const double b[3],
-                          const double a[2], double state[], vqf_real_t out[]);
+    static void filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const float b[3],
+                          const float a[2], float state[], vqf_real_t out[]);
 
 protected:
     /**

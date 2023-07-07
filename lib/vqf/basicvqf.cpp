@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], double gyrTs)
+// Modified to add timestamps in: updateGyr(const vqf_real_t gyr[3], float gyrTs)
 // Removed batch update functions
 
 #include "basicvqf.h"
@@ -45,7 +45,7 @@ BasicVQF::BasicVQF(const BasicVQFParams &params, vqf_real_t gyrTs, vqf_real_t ac
     setup();
 }
 
-void BasicVQF::updateGyr(const vqf_real_t gyr[3], double gyrTs)
+void BasicVQF::updateGyr(const vqf_real_t gyr[3], float gyrTs)
 {
     // gyroscope prediction step
     vqf_real_t gyrNorm = norm(gyr, 3);
@@ -175,8 +175,8 @@ void BasicVQF::setTauAcc(vqf_real_t tauAcc)
         return;
     }
     params.tauAcc = tauAcc;
-    double newB[3];
-    double newA[3];
+    float newB[3];
+    float newA[3];
 
     filterCoeffs(params.tauAcc, coeffs.accTs, newB, newA);
     filterAdaptStateForCoeffChange(state.lastAccLp, 3, coeffs.accLpB, coeffs.accLpA, newB, newA, state.accLpState);
@@ -313,15 +313,15 @@ vqf_real_t BasicVQF::gainFromTau(vqf_real_t tau, vqf_real_t Ts)
     }
 }
 
-void BasicVQF::filterCoeffs(vqf_real_t tau, vqf_real_t Ts, double outB[], double outA[])
+void BasicVQF::filterCoeffs(vqf_real_t tau, vqf_real_t Ts, float outB[], float outA[])
 {
     assert(tau > 0);
     assert(Ts > 0);
     // second order Butterworth filter based on https://stackoverflow.com/a/52764064
-    double fc = (M_SQRT2 / (2.0*M_PI))/double(tau); // time constant of dampened, non-oscillating part of step response
-    double C = tan(M_PI*fc*double(Ts));
-    double D = C*C + sqrt(2)*C + 1;
-    double b0 = C*C/D;
+    float fc = (M_SQRT2 / (2.0*M_PI))/float(tau); // time constant of dampened, non-oscillating part of step response
+    float C = tan(M_PI*fc*float(Ts));
+    float D = C*C + sqrt(2)*C + 1;
+    float b0 = C*C/D;
     outB[0] = b0;
     outB[1] = 2*b0;
     outB[2] = b0;
@@ -330,7 +330,7 @@ void BasicVQF::filterCoeffs(vqf_real_t tau, vqf_real_t Ts, double outB[], double
     outA[1] = (1-sqrt(2)*C+C*C)/D; // a2
 }
 
-void BasicVQF::filterInitialState(vqf_real_t x0, const double b[3], const double a[2], double out[])
+void BasicVQF::filterInitialState(vqf_real_t x0, const float b[3], const float a[2], float out[])
 {
     // initial state for steady state (equivalent to scipy.signal.lfilter_zi, obtained by setting y=x=x0 in the filter
     // update equation)
@@ -338,9 +338,9 @@ void BasicVQF::filterInitialState(vqf_real_t x0, const double b[3], const double
     out[1] = x0*(b[2] - a[1]);
 }
 
-void BasicVQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const double b_old[],
-                                              const double a_old[], const double b_new[],
-                                              const double a_new[], double state[])
+void BasicVQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, const float b_old[],
+                                              const float a_old[], const float b_new[],
+                                              const float a_new[], float state[])
 {
     if (isnan(state[0])) {
         return;
@@ -351,18 +351,18 @@ void BasicVQF::filterAdaptStateForCoeffChange(vqf_real_t last_y[], size_t N, con
     }
 }
 
-vqf_real_t BasicVQF::filterStep(vqf_real_t x, const double b[3], const double a[2], double state[2])
+vqf_real_t BasicVQF::filterStep(vqf_real_t x, const float b[3], const float a[2], float state[2])
 {
     // difference equations based on scipy.signal.lfilter documentation
     // assumes that a0 == 1.0
-    double y = b[0]*x + state[0];
+    float y = b[0]*x + state[0];
     state[0] = b[1]*x - a[0]*y + state[1];
     state[1] = b[2]*x - a[1]*y;
     return y;
 }
 
-void BasicVQF::filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const double b[3],
-                         const double a[2], double state[], vqf_real_t out[])
+void BasicVQF::filterVec(const vqf_real_t x[], size_t N, vqf_real_t tau, vqf_real_t Ts, const float b[3],
+                         const float a[2], float state[], vqf_real_t out[])
 {
     assert(N>=2);
 
