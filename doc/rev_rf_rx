@@ -1,0 +1,194 @@
+0001bd4a <RF_Rx>:
+   1bd4a:	                      1ffeb797          	auipc	a5,0x1ffeb
+   1bd4e:	                      b5e78793          	addi	a5,a5,-1186 # 200068a8 <gBleLlPara>
+   1bd52:	                      0987a783          	lw	a5,152(a5)
+   1bd56:	                  /-- cf91                	beqz	a5,1bd72 <RF_Rx+0x28>
+                                                // if (gBleLlPara[152] != 0) return 1;
+   1bd58:	                  |   4505                	li	a0,1
+   1bd5a:	                  |   8082                	ret
+   1bd5c:	            /-----|-> 4505                	li	a0,1
+   1bd5e:	/-----------|-----|-> 40f2                	lw	ra,28(sp)
+   1bd60:	|           |     |   4462                	lw	s0,24(sp)
+   1bd62:	|           |     |   44d2                	lw	s1,20(sp)
+   1bd64:	|           |     |   4942                	lw	s2,16(sp)
+   1bd66:	|           |     |   49b2                	lw	s3,12(sp)
+   1bd68:	|           |     |   4a22                	lw	s4,8(sp)
+   1bd6a:	|           |     |   4a92                	lw	s5,4(sp)
+   1bd6c:	|           |     |   4b02                	lw	s6,0(sp)
+   1bd6e:	|           |     |   6105                	addi	sp,sp,32
+   1bd70:	|           |     |   8082                	ret
+   1bd72:	|           |     \-> 1101                	addi	sp,sp,-32
+   1bd74:	|           |         ca26                	sw	s1,20(sp)
+   1bd76:	|           |         1ffeb497          	auipc	s1,0x1ffeb
+   1bd7a:	|           |         a9648493          	addi	s1,s1,-1386 # 2000680c <rfConfig>
+   1bd7e:	|           |         449c                	lw	a5,8(s1)
+   1bd80:	|           |         ce06                	sw	ra,28(sp)
+   1bd82:	|           |         cc22                	sw	s0,24(sp)
+   1bd84:	|           |         c84a                	sw	s2,16(sp)
+   1bd86:	|           |         c64e                	sw	s3,12(sp)
+   1bd88:	|           |         c452                	sw	s4,8(sp)
+   1bd8a:	|           |         c256                	sw	s5,4(sp)
+   1bd8c:	|           |         c05a                	sw	s6,0(sp)
+   1bd8e:	|           +-------- d7f9                	beqz	a5,1bd5c <RF_Rx+0x12>
+                                                // if (rfConfig[8] == 0) return 1;
+   1bd90:	|           |         9b818913          	addi	s2,gp,-1608 # 20004c80 <gptrLLEReg>
+   1bd94:	|           |         00092783          	lw	a5,0(s2)
+   1bd98:	|           |         4398                	lw	a4,0(a5)
+   1bd9a:	|           |         8b0d                	andi	a4,a4,3
+   1bd9c:	|           |     /-- c305                	beqz	a4,1bdbc <RF_Rx+0x72>
+   1bd9e:	|           |     |   4bb8                	lw	a4,80(a5)
+   1bda0:	|           |     |   9b61                	andi	a4,a4,-8
+   1bda2:	|           |     |   cbb8                	sw	a4,80(a5)
+   1bda4:	|           |     |   4398                	lw	a4,0(a5)
+   1bda6:	|           |     |   00876713          	ori	a4,a4,8
+   1bdaa:	|           |     |   c398                	sw	a4,0(a5)
+   1bdac:	|           |     |   439c                	lw	a5,0(a5)
+   1bdae:	|           |     |   838d                	srli	a5,a5,0x3
+   1bdb0:	|           |     |   8b85                	andi	a5,a5,1
+   1bdb2:	|           |     +-- c789                	beqz	a5,1bdbc <RF_Rx+0x72>
+   1bdb4:	|           |     |   0001                	nop
+   1bdb6:	|           |     |   0001                	nop
+   1bdb8:	|           |     |   0001                	nop
+   1bdba:	|           |     |   0001                	nop
+   1bdbc:	|           |     \-> 1ffeb417          	auipc	s0,0x1ffeb
+   1bdc0:	|           |         a7040413          	addi	s0,s0,-1424 # 2000682c <rfInfo>
+   1bdc4:	|           |         00c44783          	lbu	a5,12(s0)
+   1bdc8:	|           |         8ab6                	mv	s5,a3
+   1bdca:	|           |         8b32                	mv	s6,a2
+   1bdcc:	|           |         8b91                	andi	a5,a5,4
+   1bdce:	|           |         89ae                	mv	s3,a1
+   1bdd0:	|           |         8a2a                	mv	s4,a0
+   1bdd2:	|           |     /-- eb89                	bnez	a5,1bde4 <RF_Rx+0x9a>
+   1bdd4:	|           |     |   1ffeb597          	auipc	a1,0x1ffeb
+   1bdd8:	|           |     |   a385c583          	lbu	a1,-1480(a1) # 2000680c <rfConfig>
+   1bddc:	|           |     |   0405f793          	andi	a5,a1,64
+   1bde0:	|  /--------|-----|-- 14079863          	bnez	a5,1bf30 <RF_Rx+0x1e6>
+   1bde4:	|  |        |     \-> 4581                	li	a1,0
+   1bde6:	|  |        |         1ffeb517          	auipc	a0,0x1ffeb
+   1bdea:	|  |        |         a2754503          	lbu	a0,-1497(a0) # 2000680d <rfConfig+0x1>
+   1bdee:	|  |  /-----|-------> 899ff0ef          	jal	ra,1b686 <RF_DevSetChannel>
+   1bdf2:	|  |  |     |         1ffeb517          	auipc	a0,0x1ffeb
+   1bdf6:	|  |  |     |         a1a54503          	lbu	a0,-1510(a0) # 2000680c <rfConfig>
+   1bdfa:	|  |  |     |         8511                	srai	a0,a0,0x4
+   1bdfc:	|  |  |     |         4601                	li	a2,0
+   1bdfe:	|  |  |     |         1ffeb597          	auipc	a1,0x1ffeb
+   1be02:	|  |  |     |         a2a5c583          	lbu	a1,-1494(a1) # 20006828 <rfConfig+0x1c>
+   1be06:	|  |  |     |         890d                	andi	a0,a0,3
+   1be08:	|  |  |     |         a6aff0ef          	jal	ra,1b072 <BLE_SetPHYRxMode>
+                                                // BLE_SetPHYRxMode();
+   1be0c:	|  |  |     |         9ac18713          	addi	a4,gp,-1620 # 20004c74 <gptrBBReg>
+   1be10:	|  |  |     |         4494                	lw	a3,8(s1)
+   1be12:	|  |  |     |         431c                	lw	a5,0(a4)
+   1be14:	|  |  |     |         c794                	sw	a3,8(a5)
+                                                // BB[8] = rfConfig.accessAddress;
+   1be16:	|  |  |     |         44d4                	lw	a3,12(s1)
+   1be18:	|  |  |     |         c3d4                	sw	a3,4(a5)
+                                                // BB[4] = rfConfig.CRCInit;
+   1be1a:	|  |  |     |         0004c783          	lbu	a5,0(s1)
+   1be1e:	|  |  |     |         00092683          	lw	a3,0(s2)
+   1be22:	|  |  |     |         84ba                	mv	s1,a4
+   1be24:	|  |  |     |         8b85                	andi	a5,a5,1
+   1be26:	|  |  |     |         c2dc                	sw	a5,4(a3)
+                                                // LLE[4] = rfConfig.LLEMode & 1;
+   1be28:	|  |  |     |         1ffeb797          	auipc	a5,0x1ffeb
+   1be2c:	|  |  |     |         a16783a3          	sb	s6,-1529(a5) # 2000682f <rfInfo+0x3>
+                                                // rfInfo[3] = pkRxType
+   1be30:	|  |  |     |         1ffeb797          	auipc	a5,0x1ffeb
+   1be34:	|  |  |     |         9f578f23          	sb	s5,-1538(a5) # 2000682e <rfInfo+0x2>
+                                                // rfInfo[2] = pkTxType
+   1be38:	|  |  |     |         42dc                	lw	a5,4(a3)
+   1be3a:	|  |  |     |         8b85                	andi	a5,a5,1
+   1be3c:	|  |  |     |  /----- cfb1                	beqz	a5,1be98 <RF_Rx+0x14e>
+   1be3e:	|  |  |     |  |      405c                	lw	a5,4(s0)
+   1be40:	|  |  |     |  |  /-- e385                	bnez	a5,1be60 <RF_Rx+0x116>
+   1be42:	|  |  |     |  |  |   1ffeb517          	auipc	a0,0x1ffeb
+   1be46:	|  |  |     |  |  |   9e754503          	lbu	a0,-1561(a0) # 20006829 <rfConfig+0x1d>
+   1be4a:	|  |  |     |  |  |   04900593          	li	a1,73
+   1be4e:	|  |  |     |  |  |   0509                	addi	a0,a0,2
+   1be50:	|  |  |     |  |  |   1ffe6097          	auipc	ra,0x1ffe6
+   1be54:	|  |  |     |  |  |   80e080e7          	jalr	-2034(ra) # 2000165e <tmos_memory_allocate>
+   1be58:	|  |  |     |  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1be5c:	|  |  |     |  |  |   9ca7ac23          	sw	a0,-1576(a5) # 20006830 <rfInfo+0x4>
+   1be60:	|  |  |     |  |  \-> 405c                	lw	a5,4(s0)
+   1be62:	|  |  |     \--|----- ee078de3          	beqz	a5,1bd5c <RF_Rx+0x12>
+                                                // if (rfInfo.txBuffer == 0) return 1;
+   1be66:	|  |  |        |      1ffeb717          	auipc	a4,0x1ffeb
+   1be6a:	|  |  |        |      9c874703          	lbu	a4,-1592(a4) # 2000682e <rfInfo+0x2>
+   1be6e:	|  |  |        |      00e78023          	sb	a4,0(a5)
+                                                // rfInfo.txBuffer[0] = (byte)rfInfo[2];
+   1be72:	|  |  |        |      405c                	lw	a5,4(s0)
+   1be74:	|  |  |  /-----|----- 0c0a0463          	beqz	s4,1bf3c <RF_Rx+0x1f2>
+   1be78:	|  |  |  +-----|----- 0c098263          	beqz	s3,1bf3c <RF_Rx+0x1f2>
+                                                // s4 = a0(rxData), s3 = a1(txLen)
+   1be7c:	|  |  |  |     |      013780a3          	sb	s3,1(a5)
+                                                // rfInfo.txBuffer[1] = txLen;
+   1be80:	|  |  |  |     |      4048                	lw	a0,4(s0)
+   1be82:	|  |  |  |     |      864e                	mv	a2,s3
+   1be84:	|  |  |  |     |      85d2                	mv	a1,s4
+   1be86:	|  |  |  |     |      0509                	addi	a0,a0,2
+   1be88:	|  |  |  |     |      1ffe4097          	auipc	ra,0x1ffe4
+   1be8c:	|  |  |  |     |      248080e7          	jalr	584(ra) # 200000d0 <tmos_memcpy>
+                                                // tmos_memcpy( rfInfo.txBuffer+2, txData, txLen );
+                                                // Skip to here if txData / txLen == 0, with txBuffer[1] = 0
+   1be90:	|  |  |  |  /--|----> 00092783          	lw	a5,0(s2)
+   1be94:	|  |  |  |  |  |      4058                	lw	a4,4(s0)
+   1be96:	|  |  |  |  |  |      dbb8                	sw	a4,112(a5)
+                                                // LLE[112] = rfInfo.txBuffer
+   1be98:	|  |  |  |  |  \----> ae6ff0ef          	jal	ra,1b17e <ll_multi_states_check>
+                                                // ll_multi_states_check();
+   1be9c:	|  |  |  |  |         00e44783          	lbu	a5,14(s0)
+   1bea0:	|  |  |  |  |         0047e793          	ori	a5,a5,4
+   1bea4:	|  |  |  |  |         1ffeb717          	auipc	a4,0x1ffeb
+   1bea8:	|  |  |  |  |         98f70b23          	sb	a5,-1642(a4) # 2000683a <rfInfo+0xe>
+   1beac:	|  |  |  |  |         04000793          	li	a5,64
+   1beb0:	|  |  |  |  |         1ffeb717          	auipc	a4,0x1ffeb
+   1beb4:	|  |  |  |  |         94f70023          	sb	a5,-1728(a4) # 200067f0 <gBleIPPara>
+                                                    // gBleIPPara[0] = 0x40; // Enable RX timing detection
+   1beb8:	|  |  |  |  |         1ffeb797          	auipc	a5,0x1ffeb
+   1bebc:	|  |  |  |  |         92078e23          	sb	zero,-1732(a5) # 200067f4 <gBleIPPara+0x4>
+   1bec0:	|  |  |  |  |         47a1                	li	a5,8
+   1bec2:	|  |  |  |  |         1ffeb717          	auipc	a4,0x1ffeb
+   1bec6:	|  |  |  |  |         92f70aa3          	sb	a5,-1739(a4) # 200067f7 <gBleIPPara+0x7>
+                                                    // gBleIPPara[7] = 5 + 3; // Set BB IRQ target to process 5 (RF_RxProcess)
+   1beca:	|  |  |  |  |         1ffea797          	auipc	a5,0x1ffea
+   1bece:	|  |  |  |  |         72a78793          	addi	a5,a5,1834 # 200065f4 <ble>
+   1bed2:	|  |  |  |  |         579c                	lw	a5,40(a5)
+   1bed4:	|  |  |  |  |     /-- cb91                	beqz	a5,1bee8 <RF_Rx+0x19e>
+   1bed6:	|  |  |  |  |     |   64000613          	li	a2,1600
+   1beda:	|  |  |  |  |     |   45c1                	li	a1,16
+   1bedc:	|  |  |  |  |     |   1ffeb517          	auipc	a0,0x1ffeb
+   1bee0:	|  |  |  |  |     |   96054503          	lbu	a0,-1696(a0) # 2000683c <rfInfo+0x10>
+   1bee4:	|  |  |  |  |     |   910ea0ef          	jal	ra,5ff4 <tmos_start_task>
+   1bee8:	|  |  |  |  |     \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1beec:	|  |  |  |  |         900786a3          	sb	zero,-1779(a5) # 200067f5 <gBleIPPara+0x5>
+   1bef0:	|  |  |  |  |         00092683          	lw	a3,0(s2)
+   1bef4:	|  |  |  |  |         1ffeb797          	auipc	a5,0x1ffeb
+   1bef8:	|  |  |  |  |         8e078ea3          	sb	zero,-1795(a5) # 200067f1 <gBleIPPara+0x1>
+   1befc:	|  |  |  |  |         4098                	lw	a4,0(s1)
+   1befe:	|  |  |  |  |         4785                	li	a5,1
+   1bf00:	|  |  |  |  |         c29c                	sw	a5,0(a3)
+   1bf02:	|  |  |  |  |         431c                	lw	a5,0(a4)
+   1bf04:	|  |  |  |  |         00330637          	lui	a2,0x330
+   1bf08:	|  |  |  |  |         4501                	li	a0,0
+   1bf0a:	|  |  |  |  |         e7f7f793          	andi	a5,a5,-385
+   1bf0e:	|  |  |  |  |         c31c                	sw	a5,0(a4)
+   1bf10:	|  |  |  |  |         431c                	lw	a5,0(a4)
+   1bf12:	|  |  |  |  |         e7f7f793          	andi	a5,a5,-385
+   1bf16:	|  |  |  |  |         1007e793          	ori	a5,a5,256
+   1bf1a:	|  |  |  |  |         c31c                	sw	a5,0(a4)
+   1bf1c:	|  |  |  |  |         9c018793          	addi	a5,gp,-1600 # 20004c88 <gptrRFENDReg>
+   1bf20:	|  |  |  |  |         4398                	lw	a4,0(a5)
+   1bf22:	|  |  |  |  |         471c                	lw	a5,8(a4)
+   1bf24:	|  |  |  |  |         8fd1                	or	a5,a5,a2
+   1bf26:	|  |  |  |  |         c71c                	sw	a5,8(a4)
+   1bf28:	|  |  |  |  |         0d900793          	li	a5,217
+   1bf2c:	|  |  |  |  |         cabc                	sw	a5,80(a3)
+   1bf2e:	\--|--|--|--|-------- bd05                	j	1bd5e <RF_Rx+0x14>
+                                                // return 0;
+   1bf30:	   \--|--|--|-------> 0305f593          	andi	a1,a1,48
+   1bf34:	      |  |  |         0015e593          	ori	a1,a1,1
+   1bf38:	      |  |  |         40c8                	lw	a0,4(s1)
+   1bf3a:	      \--|--|-------- bd55                	j	1bdee <RF_Rx+0xa4>
+   1bf3c:	         \--|-------> 000780a3          	sb	zero,1(a5)
+                                                // rfInfo.txBuffer[1] = 0
+   1bf40:	            \-------- bf81                	j	1be90 <RF_Rx+0x146>

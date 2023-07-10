@@ -1,0 +1,16 @@
+void TMOS_ProcessEventRegister(void(*ProcessCallback)(), uint32_t ProcessId) {
+    if (ProcessId <= 6) {
+        pfnProcessCBs[ProcessId] = ProcessCallback;
+    }
+}
+
+
+00006312 <TMOS_ProcessRegister>:
+    6312:	    4799                	li	a5,6
+    6314:	/-- 00b7e963          	bltu	a5,a1,6326 <TMOS_ProcessRegister+0x14>
+    6318:	|   058a                	slli	a1,a1,0x2
+    631a:	|   20000797          	auipc	a5,0x20000
+    631e:	|   34278793          	addi	a5,a5,834 # 2000665c <pfnProcessCBs>
+    6322:	|   95be                	add	a1,a1,a5
+    6324:	|   c188                	sw	a0,0(a1)
+    6326:	\-> 8082                	ret

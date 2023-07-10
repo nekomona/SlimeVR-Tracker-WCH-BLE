@@ -1,0 +1,123 @@
+void ll_tx_wait_finish(0, LLE_PHY_TYPE, 2);
+
+20000f68 <ll_tx_wait_finish>:
+20000f68:	                   1141                	addi	sp,sp,-16
+20000f6a:	                   c422                	sw	s0,8(sp)
+20000f6c:	                   c606                	sw	ra,12(sp)
+20000f6e:	                   9b818413          	addi	s0,gp,-1608 # 20004c80 <gptrLLEReg>
+20000f72:	                   4018                	lw	a4,0(s0)
+20000f74:	            /----- e559                	bnez	a0,20001002 <ll_tx_wait_finish+0x9a>
+                                                // if (a0 != 0) {branch}
+20000f76:	            |      87ae                	mv	a5,a1
+20000f78:	            |  /-> 5374                	lw	a3,100(a4)
+20000f7a:	            |  \-- fefd                	bnez	a3,20000f78 <ll_tx_wait_finish+0x10>
+                                                // while (LLE[100] != 0);
+20000f7c:	            |      853e                	mv	a0,a5
+20000f7e:	            |      85b2                	mv	a1,a2
+20000f80:	            |      00006797          	auipc	a5,0x6
+20000f84:	            |      86078923          	sb	zero,-1934(a5) # 200067f2 <gBleIPPara+0x2>
+                                                // gBleIPPara[2] = 0
+20000f88:	            |      e001a097          	auipc	ra,0xe001a
+20000f8c:	            |      fc4080e7          	jalr	-60(ra) # 1af4c <BLE_SetPHYTxMode>
+                                                // BLE_SetPHYTxMode();
+20000f90:	            |      9ac18793          	addi	a5,gp,-1620 # 20004c74 <gptrBBReg>
+20000f94:	            |      439c                	lw	a5,0(a5)
+20000f96:	            |      008006b7          	lui	a3,0x800
+20000f9a:	            |      4398                	lw	a4,0(a5)
+20000f9c:	            |      8f55                	or	a4,a4,a3
+20000f9e:	            |      c398                	sw	a4,0(a5)
+0                                               // BB[0] |= 0x800000;
+20000fa0:	            |      57d8                	lw	a4,44(a5)
+20000fa2:	            |      9b71                	andi	a4,a4,-4
+20000fa4:	            |      d7d8                	sw	a4,44(a5)
+                                                // BB[44] &= ~0x3;
+20000fa6:	            |      00006797          	auipc	a5,0x6
+20000faa:	            |      840787a3          	sb	zero,-1969(a5) # 200067f5 <gBleIPPara+0x5>
+                                                // gBleIPPara[5] = 0
+20000fae:	            |      00006797          	auipc	a5,0x6
+20000fb2:	            |      840781a3          	sb	zero,-1981(a5) # 200067f1 <gBleIPPara+0x1>
+                                                // gBleIPPara[1] = 0
+20000fb6:	            |      401c                	lw	a5,0(s0)
+20000fb8:	            |      4709                	li	a4,2
+20000fba:	            |      c398                	sw	a4,0(a5)
+                                                // LLE[0] = 2;
+20000fbc:	            |      e000f7b7          	lui	a5,0xe000f
+20000fc0:	            |      d107a703          	lw	a4,-752(a5)
+                                                // a4 = PFIC_SCTLR
+20000fc4:	            |      9b6d                	andi	a4,a4,-5
+20000fc6:	            |      d0e7a823          	sw	a4,-752(a5)
+                                                // PFIC_SCTLR &= ~0x4;
+20000fca:	            |      d107a703          	lw	a4,-752(a5)
+20000fce:	            |      9b5d                	andi	a4,a4,-9
+20000fd0:	            |      d0e7a823          	sw	a4,-752(a5)
+                                                // PFIC_SCTLR &= ~0x8;
+                                                // WFI==WFI, idle
+20000fd4:	            |      10500073          	wfi
+20000fd8:	      /-----|----> 4014                	lw	a3,0(s0)
+20000fda:	      |     |      00006717          	auipc	a4,0x6
+20000fde:	      |     |      81670713          	addi	a4,a4,-2026 # 200067f0 <gBleIPPara>
+20000fe2:	/-----|-----|----> 00274783          	lbu	a5,2(a4)
+20000fe6:	|     |     |      8b85                	andi	a5,a5,1
+20000fe8:	|  /--|-----|----- eb89                	bnez	a5,20000ffa <ll_tx_wait_finish+0x92>
+                                                // if ( (gBleIPPara[2] & 0x1) != 0) { return; }
+20000fea:	|  |  |     |      00374783          	lbu	a5,3(a4)
+20000fee:	|  |  |     |      8b85                	andi	a5,a5,1
+20000ff0:	|  |  |  /--|----- c3d9                	beqz	a5,20001076 <ll_tx_wait_finish+0x10e>
+                                                // if ( (gBleIPPara[3] & 0x1) == 0) { branch }
+20000ff2:	|  |  |  |  |      00006797          	auipc	a5,0x6
+20000ff6:	|  |  |  |  |      80078123          	sb	zero,-2046(a5) # 200067f4 <gBleIPPara+0x4>
+                                                // gBleIPPara[4] = 0
+20000ffa:	|  >--|--|--|----> 40b2                	lw	ra,12(sp)
+20000ffc:	|  |  |  |  |      4422                	lw	s0,8(sp)
+20000ffe:	|  |  |  |  |      0141                	addi	sp,sp,16
+20001000:	|  |  |  |  |      8082                	ret
+20001002:	|  |  |  |  \----> 478d                	li	a5,3
+20001004:	|  |  |  |     /-- 00f51e63          	bne	a0,a5,20001020 <ll_tx_wait_finish+0xb8>
+20001008:	|  |  |  |     |   9ac18793          	addi	a5,gp,-1620 # 20004c74 <gptrBBReg>
+2000100c:	|  |  |  |     |   439c                	lw	a5,0(a5)
+2000100e:	|  |  |  |     |   008006b7          	lui	a3,0x800
+20001012:	|  |  |  |     |   4398                	lw	a4,0(a5)
+20001014:	|  |  |  |     |   8f55                	or	a4,a4,a3
+20001016:	|  |  |  |     |   c398                	sw	a4,0(a5)
+20001018:	|  |  |  |     |   57d8                	lw	a4,44(a5)
+2000101a:	|  |  |  |     |   9b71                	andi	a4,a4,-4
+2000101c:	|  |  |  |     |   d7d8                	sw	a4,44(a5)
+2000101e:	|  |  +--|-----|-- bf6d                	j	20000fd8 <ll_tx_wait_finish+0x70>
+20001020:	|  |  |  |     \-> 4785                	li	a5,1
+20001022:	|  |  +--|-------- faf51be3          	bne	a0,a5,20000fd8 <ll_tx_wait_finish+0x70>
+20001026:	|  |  |  |         67b5                	lui	a5,0xd
+20001028:	|  |  |  |         07bd                	addi	a5,a5,15
+2000102a:	|  |  |  |         c75c                	sw	a5,12(a4)
+2000102c:	|  |  |  |         0000100f          	fence.i
+20001030:	|  |  |  |         401c                	lw	a5,0(s0)
+20001032:	|  |  |  |         6709                	lui	a4,0x2
+20001034:	|  |  |  |         4609                	li	a2,2
+20001036:	|  |  |  |         c798                	sw	a4,8(a5)
+                                                // LLE[8] = 0x2000
+20001038:	|  |  |  |         f8000713          	li	a4,-128
+2000103c:	|  |  |  |         00005697          	auipc	a3,0x5
+20001040:	|  |  |  |         7ae68c23          	sb	a4,1976(a3) # 200067f4 <gBleIPPara+0x4>
+                                                // gBleIPPara[4] = 0x80
+20001044:	|  |  |  |         9ac18713          	addi	a4,gp,-1620 # 20004c74 <gptrBBReg>
+20001048:	|  |  |  |         4314                	lw	a3,0(a4)
+2000104a:	|  |  |  |         4298                	lw	a4,0(a3)
+2000104c:	|  |  |  |         8331                	srli	a4,a4,0xc
+2000104e:	|  |  |  |         8b0d                	andi	a4,a4,3
+20001050:	|  |  |  |     /-- 00c71963          	bne	a4,a2,20001062 <ll_tx_wait_finish+0xfa>
+20001054:	|  |  |  |     |   43e00713          	li	a4,1086
+20001058:	|  |  |  |  /--|-> d3f8                	sw	a4,100(a5)
+2000105a:	|  |  |  |  |  |   673d                	lui	a4,0xf
+2000105c:	|  |  |  |  |  |   073d                	addi	a4,a4,15
+2000105e:	|  |  |  |  |  |   c7d8                	sw	a4,12(a5)
+20001060:	|  |  \--|--|--|-- bfa5                	j	20000fd8 <ll_tx_wait_finish+0x70>
+20001062:	|  |     |  |  \-> 4298                	lw	a4,0(a3)
+20001064:	|  |     |  |      8331                	srli	a4,a4,0xc
+20001066:	|  |     |  |      8b0d                	andi	a4,a4,3
+20001068:	|  |     |  |  /-- e701                	bnez	a4,20001070 <ll_tx_wait_finish+0x108>
+2000106a:	|  |     |  |  |   19600713          	li	a4,406
+2000106e:	|  |     |  +--|-- b7ed                	j	20001058 <ll_tx_wait_finish+0xf0>
+20001070:	|  |     |  |  \-> 1be00713          	li	a4,446
+20001074:	|  |     |  \----- b7d5                	j	20001058 <ll_tx_wait_finish+0xf0>
+20001076:	|  |     \-------> 52fc                	lw	a5,100(a3)
+20001078:	\--|-------------- f7ad                	bnez	a5,20000fe2 <ll_tx_wait_finish+0x7a>
+2000107a:	   \-------------- b741                	j	20000ffa <ll_tx_wait_finish+0x92>

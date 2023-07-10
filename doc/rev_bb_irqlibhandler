@@ -1,0 +1,164 @@
+20000d46 <BB_IRQLibHandler>:
+20000d46:	       9ac18713          	addi	a4,gp,-1620 # 20004c74 <gptrBBReg>
+20000d4a:	       4314                	lw	a3,0(a4)
+                                // a3 = BB
+20000d4c:	       1141                	addi	sp,sp,-16
+20000d4e:	       c422                	sw	s0,8(sp)
+20000d50:	       5e9c                	lw	a5,56(a3)
+20000d52:	       c04a                	sw	s2,0(sp)
+20000d54:	       c606                	sw	ra,12(sp)
+20000d56:	       8399                	srli	a5,a5,0x6
+20000d58:	       c226                	sw	s1,4(sp)
+20000d5a:	       8b85                	andi	a5,a5,1
+                                // a5 = (BB->[56] >> 0x6) & 0x1
+20000d5c:	       843a                	mv	s0,a4
+20000d5e:	       9a818913          	addi	s2,gp,-1624 # 20004c70 <gptrAESReg>
+20000d62:	/----- c7d1                	beqz	a5,20000dee <BB_IRQLibHandler+0xa8>
+                                // if ( ! (BB->[56] & 0x40) ) branch;
+20000d64:	|      5e9c                	lw	a5,56(a3)
+20000d66:	|      00006497          	auipc	s1,0x6
+20000d6a:	|      a8a48493          	addi	s1,s1,-1398 # 200067f0 <gBleIPPara>
+                                // s1 = gBleIPPara
+20000d6e:	|      f9f7f793          	andi	a5,a5,-97
+20000d72:	|      de9c                	sw	a5,56(a3)
+                                // BB[56] &= ~0x60;
+20000d74:	|      00006717          	auipc	a4,0x6
+20000d78:	|      a8274703          	lbu	a4,-1406(a4) # 200067f6 <gBleIPPara+0x6>
+20000d7c:	|      08000793          	li	a5,128
+20000d80:	|  /-- 00f71b63          	bne	a4,a5,20000d96 <BB_IRQLibHandler+0x50>
+                                // if (gBleIPPara[6] == 0x80) {
+20000d84:	|  |   00092783          	lw	a5,0(s2)
+20000d88:	|  |   439c                	lw	a5,0(a5)
+20000d8a:	|  |   0407f793          	andi	a5,a5,64
+20000d8e:	|  |   00006717          	auipc	a4,0x6
+20000d92:	|  |   a6f70423          	sb	a5,-1432(a4) # 200067f6 <gBleIPPara+0x6>
+                                //     gBleIPPara[6] = AES[0] & 0x40;
+                                // }
+20000d96:	|  \-> 0004c783          	lbu	a5,0(s1)
+20000d9a:	|      0407f793          	andi	a5,a5,64
+20000d9e:	|  /-- c38d                	beqz	a5,20000dc0 <BB_IRQLibHandler+0x7a>
+                                // if (gBleIPPara[0] & 0x40) {
+20000da0:	|  |   8e018793          	addi	a5,gp,-1824 # 20004ba8 <fnGetClockCBs>
+20000da4:	|  |   439c                	lw	a5,0(a5)
+20000da6:	|  |   9782                	jalr	a5
+20000da8:	|  |   00006797          	auipc	a5,0x6
+20000dac:	|  |   a4a7ac23          	sw	a0,-1448(a5) # 20006800 <gBleIPPara+0x10>
+                                //     gBleIPPara[0x10] = fnGetClockCBs();
+20000db0:	|  |   0004c783          	lbu	a5,0(s1)
+20000db4:	|  |   0bf7f793          	andi	a5,a5,191
+20000db8:	|  |   00006717          	auipc	a4,0x6
+20000dbc:	|  |   a2f70c23          	sb	a5,-1480(a4) # 200067f0 <gBleIPPara>
+                                //     gBleIPPara[0] &= ~0x40;
+                                // }
+20000dc0:	|  \-> 0044c783          	lbu	a5,4(s1)
+20000dc4:	|      0407f793          	andi	a5,a5,64
+20000dc8:	+----- e39d                	bnez	a5,20000dee <BB_IRQLibHandler+0xa8>
+                                // if (gBleIPPara[4] & 0x40) branch;
+20000dca:	|      4785                	li	a5,1
+20000dcc:	|      00006717          	auipc	a4,0x6
+20000dd0:	|      a2f704a3          	sb	a5,-1495(a4) # 200067f5 <gBleIPPara+0x5>
+                                // gBleIPPara[5] = 1; // gBleIPPara->bbflag = 1;
+20000dd4:	|      9b818793          	addi	a5,gp,-1608 # 20004c80 <gptrLLEReg>
+20000dd8:	|      439c                	lw	a5,0(a5)
+                                // a5 = LLE;
+20000dda:	|      6709                	lui	a4,0x2
+20000ddc:	|      c798                	sw	a4,8(a5)
+                                // LLE->[8] = 0x2000;
+20000dde:	|      fc000713          	li	a4,-64
+20000de2:	|      00006697          	auipc	a3,0x6
+20000de6:	|      a0e68923          	sb	a4,-1518(a3) # 200067f4 <gBleIPPara+0x4>
+                                // gBleIPPara[0x4] = 0xC0;
+20000dea:	|      44d8                	lw	a4,12(s1)
+20000dec:	|      d3f8                	sw	a4,100(a5)
+                                // LLE->[100] = gBleIPPara[12];
+20000dee:	\----> 401c                	lw	a5,0(s0)
+                                // a5 = BB;
+20000df0:	       5f98                	lw	a4,56(a5)
+20000df2:	       8311                	srli	a4,a4,0x4
+20000df4:	       8b05                	andi	a4,a4,1
+20000df6:	   /-- cb09                	beqz	a4,20000e08 <BB_IRQLibHandler+0xc2>
+                                // if (LLE[56] & 0x10) {
+20000df8:	   |   5f98                	lw	a4,56(a5)
+20000dfa:	   |   9b3d                	andi	a4,a4,-17
+20000dfc:	   |   df98                	sw	a4,56(a5)
+                                //     LLE[56] &= ~0x10;
+20000dfe:	   |   4705                	li	a4,1
+20000e00:	   |   00006697          	auipc	a3,0x6
+20000e04:	   |   9ee68a23          	sb	a4,-1548(a3) # 200067f4 <gBleIPPara+0x4>
+                                //     gBleIPPara[0x4] = 1
+                                // }
+20000e08:	   \-> 5f98                	lw	a4,56(a5)
+20000e0a:	       831d                	srli	a4,a4,0x7
+20000e0c:	       8b05                	andi	a4,a4,1
+20000e0e:	   /-- cb11                	beqz	a4,20000e22 <BB_IRQLibHandler+0xdc>
+                                // if (LLE[56] & 0x80) {
+20000e10:	   |   5f98                	lw	a4,56(a5)
+20000e12:	   |   f7f77713          	andi	a4,a4,-129
+20000e16:	   |   df98                	sw	a4,56(a5)
+                                //     LLE[56] &= ~0x80;
+20000e18:	   |   4785                	li	a5,1
+20000e1a:	   |   00006717          	auipc	a4,0x6
+20000e1e:	   |   9cf70d23          	sb	a5,-1574(a4) # 200067f4 <gBleIPPara+0x4>
+                                //     gBleIPPara[0x4] = 1
+                                // }
+20000e22:	   \-> 00092783          	lw	a5,0(s2)
+                                    // a5 = AES
+20000e26:	       43d8                	lw	a4,4(a5)
+20000e28:	       8305                	srli	a4,a4,0x1
+20000e2a:	       8b05                	andi	a4,a4,1
+20000e2c:	   /-- c719                	beqz	a4,20000e3a <BB_IRQLibHandler+0xf4>
+                                    // if (AES[4] & 0x02) {
+20000e2e:	   |   43d8                	lw	a4,4(a5)
+20000e30:	   |   9b75                	andi	a4,a4,-3
+20000e32:	   |   c3d8                	sw	a4,4(a5)
+                                    //     AES[4] &= 0x2;
+20000e34:	   |   43d8                	lw	a4,4(a5)
+20000e36:	   |   9b79                	andi	a4,a4,-2
+20000e38:	   |   c3d8                	sw	a4,4(a5)
+                                    //     AES[4] &= 0x1;
+                                    // }
+20000e3a:	   \-> 40b2                	lw	ra,12(sp)
+20000e3c:	       4422                	lw	s0,8(sp)
+20000e3e:	       4492                	lw	s1,4(sp)
+20000e40:	       4902                	lw	s2,0(sp)
+20000e42:	       0141                	addi	sp,sp,16
+20000e44:	       8082                	ret
+                                    // return;
+
+20000e46 <BB_IRQLibFunction>:
+20000e46:	7139                	addi	sp,sp,-64
+20000e48:	de06                	sw	ra,60(sp)
+20000e4a:	dc16                	sw	t0,56(sp)
+20000e4c:	da1a                	sw	t1,52(sp)
+20000e4e:	d81e                	sw	t2,48(sp)
+20000e50:	d62a                	sw	a0,44(sp)
+20000e52:	d42e                	sw	a1,40(sp)
+20000e54:	d232                	sw	a2,36(sp)
+20000e56:	d036                	sw	a3,32(sp)
+20000e58:	ce3a                	sw	a4,28(sp)
+20000e5a:	cc3e                	sw	a5,24(sp)
+20000e5c:	ca42                	sw	a6,20(sp)
+20000e5e:	c846                	sw	a7,16(sp)
+20000e60:	c672                	sw	t3,12(sp)
+20000e62:	c476                	sw	t4,8(sp)
+20000e64:	c27a                	sw	t5,4(sp)
+20000e66:	c07e                	sw	t6,0(sp)
+20000e68:	3df9                	jal	20000d46 <BB_IRQLibHandler>
+20000e6a:	50f2                	lw	ra,60(sp)
+20000e6c:	52e2                	lw	t0,56(sp)
+20000e6e:	5352                	lw	t1,52(sp)
+20000e70:	53c2                	lw	t2,48(sp)
+20000e72:	5532                	lw	a0,44(sp)
+20000e74:	55a2                	lw	a1,40(sp)
+20000e76:	5612                	lw	a2,36(sp)
+20000e78:	5682                	lw	a3,32(sp)
+20000e7a:	4772                	lw	a4,28(sp)
+20000e7c:	47e2                	lw	a5,24(sp)
+20000e7e:	4852                	lw	a6,20(sp)
+20000e80:	48c2                	lw	a7,16(sp)
+20000e82:	4e32                	lw	t3,12(sp)
+20000e84:	4ea2                	lw	t4,8(sp)
+20000e86:	4f12                	lw	t5,4(sp)
+20000e88:	4f82                	lw	t6,0(sp)
+20000e8a:	6121                	addi	sp,sp,64
+20000e8c:	30200073          	mret

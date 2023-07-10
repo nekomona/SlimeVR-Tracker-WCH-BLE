@@ -1,0 +1,154 @@
+0001b7d6 <RF_TxProcess>:
+   1b7d6:	                   9b818793          	addi	a5,gp,-1608 # 20004c80 <gptrLLEReg>
+   1b7da:	                   4398                	lw	a4,0(a5)
+   1b7dc:	                   7179                	addi	sp,sp,-48
+   1b7de:	                   1ffeb517          	auipc	a0,0x1ffeb
+   1b7e2:	                   02e54503          	lbu	a0,46(a0) # 2000680c <rfConfig>
+   1b7e6:	                   d422                	sw	s0,40(sp)
+   1b7e8:	                   d226                	sw	s1,36(sp)
+   1b7ea:	                   d606                	sw	ra,44(sp)
+   1b7ec:	                   d04a                	sw	s2,32(sp)
+   1b7ee:	                   ce4e                	sw	s3,28(sp)
+   1b7f0:	                   00157693          	andi	a3,a0,1
+   1b7f4:	                   84be                	mv	s1,a5
+   1b7f6:	                   1ffeb417          	auipc	s0,0x1ffeb
+   1b7fa:	                   ffa40413          	addi	s0,s0,-6 # 200067f0 <gBleIPPara>
+                                            // s0 = gBleIPPara
+   1b7fe:	/--/-------------X 12068f63          	beqz	a3,1b93c <RF_TxProcess+0x166>
+                                            // if (rfConfig.LLEMode & 0x1 == LLE_MODE_BASIC) { branch }
+   1b802:	|  |               00244783          	lbu	a5,2(s0)
+   1b806:	|  |               8b85                	andi	a5,a5,1
+   1b808:	|  |  /----------- 10078663          	beqz	a5,1b914 <RF_TxProcess+0x13e>
+   1b80c:	|  |  |            8511                	srai	a0,a0,0x4
+   1b80e:	|  |  |            4601                	li	a2,0
+   1b810:	|  |  |            1ffeb597          	auipc	a1,0x1ffeb
+   1b814:	|  |  |            0185c583          	lbu	a1,24(a1) # 20006828 <rfConfig+0x1c>
+   1b818:	|  |  |            890d                	andi	a0,a0,3
+   1b81a:	|  |  |            1ffeb797          	auipc	a5,0x1ffeb
+   1b81e:	|  |  |            fc078c23          	sb	zero,-40(a5) # 200067f2 <gBleIPPara+0x2>
+   1b822:	|  |  |            851ff0ef          	jal	ra,1b072 <BLE_SetPHYRxMode>
+   1b826:	|  |  |            1ffeb597          	auipc	a1,0x1ffeb
+   1b82a:	|  |  |            fe65c583          	lbu	a1,-26(a1) # 2000680c <rfConfig>
+   1b82e:	|  |  |            8591                	srai	a1,a1,0x4
+   1b830:	|  |  |            0ff00613          	li	a2,255
+   1b834:	|  |  |            898d                	andi	a1,a1,3
+   1b836:	|  |  |            4505                	li	a0,1
+   1b838:	|  |  |            1ffe5097          	auipc	ra,0x1ffe5
+   1b83c:	|  |  |            730080e7          	jalr	1840(ra) # 20000f68 <ll_tx_wait_finish>
+   1b840:	|  |  |            f77ff0ef          	jal	ra,1b7b6 <rf_stop>
+   1b844:	|  |  |            1ffeb917          	auipc	s2,0x1ffeb
+   1b848:	|  |  |            fc890913          	addi	s2,s2,-56 # 2000680c <rfConfig>
+   1b84c:	|  |  |            01092783          	lw	a5,16(s2)
+   1b850:	|  |  |            4601                	li	a2,0
+   1b852:	|  |  |            4581                	li	a1,0
+   1b854:	|  |  |            4505                	li	a0,1
+   1b856:	|  |  |            9782                	jalr	a5
+   1b858:	|  |  |            00344783          	lbu	a5,3(s0)
+   1b85c:	|  |  |            89ca                	mv	s3,s2
+   1b85e:	|  |  |            8b85                	andi	a5,a5,1
+   1b860:	|  |  |     /----- cfc1                	beqz	a5,1b8f8 <RF_TxProcess+0x122>
+   1b862:	|  |  |     |      4c08                	lw	a0,24(s0)
+   1b864:	|  |  |     |      1ffeb797          	auipc	a5,0x1ffeb
+   1b868:	|  |  |     |      f80787a3          	sb	zero,-113(a5) # 200067f3 <gBleIPPara+0x3>
+   1b86c:	|  |  |     |      4581                	li	a1,0
+   1b86e:	|  |  |     |      4681                	li	a3,0
+   1b870:	|  |  |     |      00f10613          	addi	a2,sp,15
+   1b874:	|  |  |     |      000107a3          	sb	zero,15(sp)
+   1b878:	|  |  |     |      1ffeb797          	auipc	a5,0x1ffeb
+   1b87c:	|  |  |     |      f6078e23          	sb	zero,-132(a5) # 200067f4 <gBleIPPara+0x4>
+   1b880:	|  |  |     |      1ffe5097          	auipc	ra,0x1ffe5
+   1b884:	|  |  |     |      64a080e7          	jalr	1610(ra) # 20000eca <ble_ll_chkcrc>
+   1b888:	|  |  |     |      01851593          	slli	a1,a0,0x18
+   1b88c:	|  |  |     |      85e1                	srai	a1,a1,0x18
+   1b88e:	|  |  |     |  /-- e18d                	bnez	a1,1b8b0 <RF_TxProcess+0xda>
+   1b890:	|  |  |     |  |   4c1c                	lw	a5,24(s0)
+   1b892:	|  |  |     |  |   0ff00693          	li	a3,255
+   1b896:	|  |  |     |  |   0007c703          	lbu	a4,0(a5)
+   1b89a:	|  |  |     |  +-- 00d70b63          	beq	a4,a3,1b8b0 <RF_TxProcess+0xda>
+   1b89e:	|  |  |     |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1b8a2:	|  |  |     |  |   f8f7c783          	lbu	a5,-113(a5) # 2000682d <rfInfo+0x1>
+   1b8a6:	|  |  |     |  +-- 00d78563          	beq	a5,a3,1b8b0 <RF_TxProcess+0xda>
+   1b8aa:	|  |  |     |  +-- 00f70363          	beq	a4,a5,1b8b0 <RF_TxProcess+0xda>
+   1b8ae:	|  |  |     |  |   4589                	li	a1,2
+   1b8b0:	|  |  |     |  \-> 00098783          	lb	a5,0(s3)
+   1b8b4:	|  |  |     |  /-- 0007c763          	bltz	a5,1b8c2 <RF_TxProcess+0xec>
+   1b8b8:	|  |  |     |  |   4c1c                	lw	a5,24(s0)
+   1b8ba:	|  |  |     |  |   00f14703          	lbu	a4,15(sp)
+   1b8be:	|  |  |     |  |   00e78023          	sb	a4,0(a5)
+   1b8c2:	|  |  |     |  \-> 0109a783          	lw	a5,16(s3)
+   1b8c6:	|  |  |     |      4c10                	lw	a2,24(s0)
+   1b8c8:	|  |  |     |      0ff5f593          	andi	a1,a1,255
+   1b8cc:	|  |  |     |      4509                	li	a0,2
+   1b8ce:	|  |  |     |      9782                	jalr	a5
+   1b8d0:	|  |  |     |      1ffeb797          	auipc	a5,0x1ffeb
+   1b8d4:	|  |  |     |      f687c783          	lbu	a5,-152(a5) # 20006838 <rfInfo+0xc>
+   1b8d8:	|  |  |     |      8b89                	andi	a5,a5,2
+   1b8da:	|  |  |     |  /-- cb81                	beqz	a5,1b8ea <RF_TxProcess+0x114>
+   1b8dc:	|  |  |     |  |   4585                	li	a1,1
+   1b8de:	|  |  |     |  |   1ffeb517          	auipc	a0,0x1ffeb
+   1b8e2:	|  |  |     |  |   f5e54503          	lbu	a0,-162(a0) # 2000683c <rfInfo+0x10>
+   1b8e6:	|  |  |     |  |   dfeea0ef          	jal	ra,5ee4 <tmos_set_event>
+   1b8ea:	|  |  |     |  >-> 50b2                	lw	ra,44(sp)
+   1b8ec:	|  |  |     |  |   5422                	lw	s0,40(sp)
+   1b8ee:	|  |  |     |  |   5492                	lw	s1,36(sp)
+   1b8f0:	|  |  |     |  |   5902                	lw	s2,32(sp)
+   1b8f2:	|  |  |     |  |   49f2                	lw	s3,28(sp)
+   1b8f4:	|  |  |     |  |   6145                	addi	sp,sp,48
+   1b8f6:	|  |  |     |  |   8082                	ret
+   1b8f8:	|  |  |     \--|-> 409c                	lw	a5,0(s1)
+   1b8fa:	|  |  |        |   53fc                	lw	a5,100(a5)
+   1b8fc:	|  |  |        +-- f7fd                	bnez	a5,1b8ea <RF_TxProcess+0x114>
+   1b8fe:	|  |  |        |   1ffeb797          	auipc	a5,0x1ffeb
+   1b902:	|  |  |        |   ee078b23          	sb	zero,-266(a5) # 200067f4 <gBleIPPara+0x4>
+   1b906:	|  |  |        |   01092783          	lw	a5,16(s2)
+   1b90a:	|  |  |        |   4601                	li	a2,0
+   1b90c:	|  |  |        |   4581                	li	a1,0
+   1b90e:	|  |  |        |   4549                	li	a0,18
+   1b910:	|  |  |  /-----|-> 9782                	jalr	a5
+   1b912:	|  |  |  |     \-- bfe1                	j	1b8ea <RF_TxProcess+0x114>
+   1b914:	|  |  \--|-------> 537c                	lw	a5,100(a4)
+   1b916:	|  \-----|-------- ee0794e3          	bnez	a5,1b7fe <RF_TxProcess+0x28>
+   1b91a:	|        |         e9dff0ef          	jal	ra,1b7b6 <rf_stop>
+   1b91e:	|        |         e1dea0ef          	jal	ra,673a <TMOS_TempSample>
+   1b922:	|        |  /----> 1ffeb797          	auipc	a5,0x1ffeb
+   1b926:	|        |  |      ec078923          	sb	zero,-302(a5) # 200067f4 <gBleIPPara+0x4>
+                                                // gBleIPPara[4] = 0;
+   1b92a:	|        |  |      1ffeb797          	auipc	a5,0x1ffeb
+   1b92e:	|        |  |      ee278793          	addi	a5,a5,-286 # 2000680c <rfConfig>
+   1b932:	|        |  |      4b9c                	lw	a5,16(a5)
+   1b934:	|        |  |      4601                	li	a2,0
+   1b936:	|        |  |      4581                	li	a1,0
+   1b938:	|        |  |      4545                	li	a0,17
+   1b93a:	|        +--|----- bfd9                	j	1b910 <RF_TxProcess+0x13a>
+                                                // rfConfig.rfStatusCB(17, 0, 0);
+                                                // return;
+                                                // Jump to here for basic
+   1b93c:	>--------|--|----> 00344783          	lbu	a5,3(s0)
+   1b940:	|        |  |      8b85                	andi	a5,a5,1
+   1b942:	|        |  |  /-- c785                	beqz	a5,1b96a <RF_TxProcess+0x194>
+                                                // if ( (gBleIPPara[3] & 1) != 0 ) { 
+   1b944:	|        |  |  |   e73ff0ef          	jal	ra,1b7b6 <rf_stop>
+                                                //     rf_stop()
+   1b948:	|        |  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1b94c:	|        |  |  |   ea0785a3          	sb	zero,-341(a5) # 200067f3 <gBleIPPara+0x3>
+                                                //     gBleIPPara[3] = 0;
+   1b950:	|        |  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1b954:	|        |  |  |   ea078223          	sb	zero,-348(a5) # 200067f4 <gBleIPPara+0x4>
+                                                //     gBleIPPara[4] = 0;
+   1b958:	|        |  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1b95c:	|        |  |  |   eb478793          	addi	a5,a5,-332 # 2000680c <rfConfig>
+   1b960:	|        |  |  |   4b9c                	lw	a5,16(a5)
+   1b962:	|        |  |  |   4601                	li	a2,0
+   1b964:	|        |  |  |   4581                	li	a1,0
+   1b966:	|        |  |  |   4505                	li	a0,1
+   1b968:	|        \--|--|-- b765                	j	1b910 <RF_TxProcess+0x13a>
+                                                //     rfConfig.rfStatusCB(1, 0, 0); // success Tx
+                                                //     return;
+                                                // }
+   1b96a:	|           |  \-> 537c                	lw	a5,100(a4)
+                                                // a5 = gptrLLEReg[100]
+   1b96c:	\-----------|----- fbe1                	bnez	a5,1b93c <RF_TxProcess+0x166>
+                                                // while (gptrLLEReg[100] !=0 (LLE busy)) {poll}
+   1b96e:	            |      e49ff0ef          	jal	ra,1b7b6 <rf_stop>
+                                                // rf_stop();
+   1b972:	            \----- bf45                	j	1b922 <RF_TxProcess+0x14c>

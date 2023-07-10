@@ -1,0 +1,211 @@
+
+20000306 <TMOS_SystemProcess>:
+20000306:	                            1141                	addi	sp,sp,-16
+20000308:	                            c422                	sw	s0,8(sp)
+2000030a:	                            00006417          	auipc	s0,0x6
+2000030e:	                            35240413          	addi	s0,s0,850 # 2000665c <pfnProcessCBs>
+20000312:	                            401c                	lw	a5,0(s0)
+20000314:	                            c606                	sw	ra,12(sp)
+20000316:	                            c226                	sw	s1,4(sp)
+20000318:	                            c04a                	sw	s2,0(sp)
+2000031a:	                        /-- c791                	beqz	a5,20000326 <TMOS_SystemProcess+0x20>
+2000031c:	                        |   9782                	jalr	a5
+2000031e:	                        |   00006797          	auipc	a5,0x6
+20000322:	                        |   3207af23          	sw	zero,830(a5) # 2000665c <pfnProcessCBs>
+                                                // if (pfnProcessCBs[0]) { 
+                                                //     (pfnProcessCBs[0])();
+                                                //     pfnProcessCBs[0] = 0x0;
+                                                // }
+20000326:	                        \-> 405c                	lw	a5,4(s0)
+20000328:	                        /-- c391                	beqz	a5,2000032c <TMOS_SystemProcess+0x26>
+2000032a:	                        |   9782                	jalr	a5
+                                                // if (pfnProcessCBs[1]) {
+                                                //     (pfnProcessCBs[1])();   
+                                                // }
+2000032c:	                        \-> 401c                	lw	a5,0(s0)
+2000032e:	/-------------------------- 1a079763          	bnez	a5,200004dc <TMOS_SystemProcess+0x1d6>
+                                                // if (pfnProcessCBs[0]) { return; } // High priority rise by process 1, rerun to process 0
+20000332:	|                           00006797          	auipc	a5,0x6
+20000336:	|                           4c37c783          	lbu	a5,1219(a5) # 200067f5 <gBleIPPara+0x5>
+2000033a:	|                           8b85                	andi	a5,a5,1
+2000033c:	|                       /-- c79d                	beqz	a5,2000036a <TMOS_SystemProcess+0x64>
+                                                // if ( (byte)gBleIPPara[5] & 0x01 ) {
+                                                //    // if(BB_IRQ)
+2000033e:	|                       |   00006797          	auipc	a5,0x6
+20000342:	|                       |   4a078ba3          	sb	zero,1207(a5) # 200067f5 <gBleIPPara+0x5>
+                                                //     gBleIPPara[5] = 0;
+20000346:	|                       |   00006717          	auipc	a4,0x6
+2000034a:	|                       |   4b174703          	lbu	a4,1201(a4) # 200067f7 <gBleIPPara+0x7>
+2000034e:	|                       |   4795                	li	a5,5
+20000350:	|                       +-- 00e7fd63          	bgeu	a5,a4,2000036a <TMOS_SystemProcess+0x64>
+                                                //     if ( 5 < (byte)gBleIPPara[7] ) {
+20000354:	|                       |   33d000ef          	jal	ra,20000e90 <ll_rx_wait_finish>
+                                                //         ll_rx_wait_finish();
+20000358:	|                       |   00006797          	auipc	a5,0x6
+2000035c:	|                       |   49f7c783          	lbu	a5,1183(a5) # 200067f7 <gBleIPPara+0x7>
+20000360:	|                       |   17f5                	addi	a5,a5,-3
+20000362:	|                       |   078a                	slli	a5,a5,0x2
+20000364:	|                       |   97a2                	add	a5,a5,s0
+20000366:	|                       |   439c                	lw	a5,0(a5)
+20000368:	|                       |   9782                	jalr	a5
+                                                //        byte fevt = (byte)gBleIPPara[7]-3;
+                                                //        pfnProcessCBs[fevt]();
+                                                //     }
+                                                // }
+2000036a:	|                       \-> 00006917          	auipc	s2,0x6
+2000036e:	|                           4c290913          	addi	s2,s2,1218 # 2000682c <rfInfo>
+20000372:	|                           00c94783          	lbu	a5,12(s2)
+20000376:	|                           8b91                	andi	a5,a5,4
+20000378:	|                       /-- c399                	beqz	a5,2000037e <TMOS_SystemProcess+0x78>
+2000037a:	|                       |   222010ef          	jal	ra,2000159c <RF_FrequencyHoppingChange>
+                                                // if ( (byte)rfInfo[12] & 0x4 ) {
+                                                //    RF_FrequencyHoppingChange();
+                                                // }
+2000037e:	|                       \-> 441c                	lw	a5,8(s0)
+20000380:	|                       /-- c391                	beqz	a5,20000384 <TMOS_SystemProcess+0x7e>
+20000382:	|                       |   9782                	jalr	a5
+
+                                                // if (pfnProcessCBs[2]) {
+                                                //     (pfnProcessCBs[2])();   
+                                                // }
+20000384:	|                       \-> 8c818493          	addi	s1,gp,-1848 # 20004b90 <EventsArr>
+20000388:	|                           4098                	lw	a4,0(s1)
+                                                // s1 = EventsArr
+                                                // a4 = *EventsArr
+2000038a:	|                           00006617          	auipc	a2,0x6
+2000038e:	|                           2a764603          	lbu	a2,679(a2) # 20006631 <gTmosPara+0x1>
+                                                // a2 = (byte)gTmosPara+0x1;
+                                                // max_process_count = a2;
+20000392:	|     /-------------------> 00006797          	auipc	a5,0x6
+20000396:	|     |                     29e7c783          	lbu	a5,670(a5) # 20006630 <gTmosPara>
+2000039a:	|     |                     00179693          	slli	a3,a5,0x1
+2000039e:	|     |                     96ba                	add	a3,a3,a4
+200003a0:	|     |                     0006d683          	lhu	a3,0(a3)
+200003a4:	|     |           /-------- cac5                	beqz	a3,20000454 <TMOS_SystemProcess+0x14e>
+200003a6:	|     |  /--------|-------> 00006797          	auipc	a5,0x6
+200003aa:	|     |  |        |         28a7c783          	lbu	a5,650(a5) # 20006630 <gTmosPara>
+200003ae:	|     |  |  /-----|-------- 0ac7ed63          	bltu	a5,a2,20000468 <TMOS_SystemProcess+0x162>
+200003b2:	|  /--|--|--|-----|-------> 00006797          	auipc	a5,0x6
+200003b6:	|  |  |  |  |     |         26078f23          	sb	zero,638(a5) # 20006630 <gTmosPara>
+200003ba:	|  |  |  |  |     |         401c                	lw	a5,0(s0)
+200003bc:	+--|--|--|--|-----|-------- 12079063          	bnez	a5,200004dc <TMOS_SystemProcess+0x1d6>
+200003c0:	|  |  |  |  |     |         00006797          	auipc	a5,0x6
+200003c4:	|  |  |  |  |     |         4397c783          	lbu	a5,1081(a5) # 200067f9 <gBleIPPara+0x9>
+200003c8:	|  |  |  |  |     |     /-- cf91                	beqz	a5,200003e4 <TMOS_SystemProcess+0xde>
+200003ca:	|  |  |  |  |     |     |   00006797          	auipc	a5,0x6
+200003ce:	|  |  |  |  |     |     |   42d7c783          	lbu	a5,1069(a5) # 200067f7 <gBleIPPara+0x7>
+200003d2:	|  |  |  |  |     |     +-- eb89                	bnez	a5,200003e4 <TMOS_SystemProcess+0xde>
+200003d4:	|  |  |  |  |     |     |   00006797          	auipc	a5,0x6
+200003d8:	|  |  |  |  |     |     |   420782a3          	sb	zero,1061(a5) # 200067f9 <gBleIPPara+0x9>
+200003dc:	|  |  |  |  |     |     |   e001b097          	auipc	ra,0xe001b
+200003e0:	|  |  |  |  |     |     |   dd6080e7          	jalr	-554(ra) # 1b1b2 <ll_multi_states_process>
+200003e4:	|  |  |  |  |     |     \-> 8e018793          	addi	a5,gp,-1824 # 20004ba8 <fnGetClockCBs>
+200003e8:	|  |  |  |  |     |         439c                	lw	a5,0(a5)
+200003ea:	+--|--|--|--|-----|-------- 0e078963          	beqz	a5,200004dc <TMOS_SystemProcess+0x1d6>
+                                                    // if (!fnGetClockCBs) return;
+200003ee:	|  |  |  |  |     |         a8c007b7          	lui	a5,0xa8c00
+200003f2:	|  |  |  |  |     |         00006717          	auipc	a4,0x6
+200003f6:	|  |  |  |  |     |         24f72723          	sw	a5,590(a4) # 20006640 <gTmosPara+0x10>
+200003fa:	|  |  |  |  |     |         3bc9                	jal	200001cc <tmos_proces_system_time>
+                                                    // tmos_proces_system_time();
+200003fc:	|  |  |  |  |     |         00006797          	auipc	a5,0x6
+20000400:	|  |  |  |  |     |         1f878793          	addi	a5,a5,504 # 200065f4 <ble>
+20000404:	|  |  |  |  |     |         53dc                	lw	a5,36(a5)
+20000406:	+--|--|--|--|-----|-------- cbf9                	beqz	a5,200004dc <TMOS_SystemProcess+0x1d6>
+                                                    // if ( ! *ble[36] ) return;
+                                                    // // if ( Sleep function not exist ) return;
+20000408:	|  |  |  |  |     |         00006717          	auipc	a4,0x6
+2000040c:	|  |  |  |  |     |         22870713          	addi	a4,a4,552 # 20006630 <gTmosPara>
+20000410:	|  |  |  |  |     |         4b18                	lw	a4,16(a4)
+20000412:	|  |  |  |  |     |         00006797          	auipc	a5,0x6
+20000416:	|  |  |  |  |     |         1f77c783          	lbu	a5,503(a5) # 20006609 <ble+0x15>
+2000041a:	+--|--|--|--|-----|-------- 0cf76163          	bltu	a4,a5,200004dc <TMOS_SystemProcess+0x1d6>
+2000041e:	|  |  |  |  |     |         00006717          	auipc	a4,0x6
+20000422:	|  |  |  |  |     |         3d974703          	lbu	a4,985(a4) # 200067f7 <gBleIPPara+0x7>
+20000426:	|  |  |  |  |     |         4795                	li	a5,5
+20000428:	+--|--|--|--|-----|-------- 0ae7ea63          	bltu	a5,a4,200004dc <TMOS_SystemProcess+0x1d6>
+2000042c:	|  |  |  |  |     |         00c94783          	lbu	a5,12(s2)
+                                                    // a5 = rfInfo[12];
+20000430:	|  |  |  |  |     |         8b91                	andi	a5,a5,4
+20000432:	+--|--|--|--|-----|-------- e7cd                	bnez	a5,200004dc <TMOS_SystemProcess+0x1d6>
+                                                    // if ( (byte)rfInfo[12] & 0x4 ) {
+                                                    //     return;
+                                                    //     // Switch to higher priority task
+                                                    // }
+20000434:	|  |  |  |  |     |         4090                	lw	a2,0(s1)
+                                                    // a2 = *EventsArr;
+20000436:	|  |  |  |  |     |         00006697          	auipc	a3,0x6
+2000043a:	|  |  |  |  |     |         1fb6c683          	lbu	a3,507(a3) # 20006631 <gTmosPara+0x1>
+2000043e:	|  |  |  |  |  /--|--/----X 0ad7c563          	blt	a5,a3,200004e8 <TMOS_SystemProcess+0x1e2>
+                                                    // a5 = (byte)rfInfo[12] & 0x4;
+                                                    // while (a5 < (byte)gTmosPara[1]) {
+                                                    //     // Bottom codes pulled up here
+                                                    //     // Check if any event is raise, else start to sleep
+                                                    //     a4 = (uint16_t*)(*EventsArr)[a5];
+                                                    //     if (a4) return;
+                                                    //     a5 += 1;
+                                                    // }
+20000442:	|  |  |  |  |  |  |  |      4422                	lw	s0,8(sp)
+20000444:	|  |  |  |  |  |  |  |      40b2                	lw	ra,12(sp)
+20000446:	|  |  |  |  |  |  |  |      4492                	lw	s1,4(sp)
+20000448:	|  |  |  |  |  |  |  |      4902                	lw	s2,0(sp)
+2000044a:	|  |  |  |  |  |  |  |      0141                	addi	sp,sp,16
+2000044c:	|  |  |  |  |  |  |  |      e0006317          	auipc	t1,0xe0006
+20000450:	|  |  |  |  |  |  |  |      88630067          	jr	-1914(t1) # 5cd2 <tmos_proces_sleep>
+                                                    //  tmos_proces_sleep();
+                                                    //  return;
+                                                    // }
+20000454:	|  |  |  |  |  |  \--|----> 0785                	addi	a5,a5,1
+20000456:	|  |  |  |  |  |     |      0ff7f793          	andi	a5,a5,255
+2000045a:	|  |  |  |  |  |     |      00006697          	auipc	a3,0x6
+2000045e:	|  |  |  |  |  |     |      1cf68b23          	sb	a5,470(a3) # 20006630 <gTmosPara>
+20000462:	|  |  \--|--|--|-----|----- f2c7e8e3          	bltu	a5,a2,20000392 <TMOS_SystemProcess+0x8c>
+20000466:	|  |     \--|--|-----|----- b781                	j	200003a6 <TMOS_SystemProcess+0xa0>
+                                                    // a4 = *EventsArr; here
+20000468:	|  |        \--|-----|----> 0786                	slli	a5,a5,0x1
+2000046a:	|  |           |     |      973e                	add	a4,a4,a5
+2000046c:	|  |           |     |      00075583          	lhu	a1,0(a4)
+20000470:	|  |           |     |      00071023          	sh	zero,0(a4)
+20000474:	|  |           |     |      8c019823          	sh	zero,-1840(gp) # 20004b98 <eventsClear>
+20000478:	|  |           |     |      8dc18793          	addi	a5,gp,-1828 # 20004ba4 <tasksArr>
+2000047c:	|  |           |     |      439c                	lw	a5,0(a5)
+2000047e:	|  |           |     |      00006517          	auipc	a0,0x6
+20000482:	|  |           |     |      1b254503          	lbu	a0,434(a0) # 20006630 <gTmosPara>
+20000486:	|  |           |     |      00251713          	slli	a4,a0,0x2
+2000048a:	|  |           |     |      97ba                	add	a5,a5,a4
+2000048c:	|  |           |     |      439c                	lw	a5,0(a5)
+2000048e:	|  |           |     |      9782                	jalr	a5
+20000490:	|  |           |     |      8d01d783          	lhu	a5,-1840(gp) # 20004b98 <eventsClear>
+20000494:	|  |           |     |      00006717          	auipc	a4,0x6
+20000498:	|  |           |     |      19c74703          	lbu	a4,412(a4) # 20006630 <gTmosPara>
+2000049c:	|  |           |     |      fff7c793          	not	a5,a5
+200004a0:	|  |           |     |      8d7d                	and	a0,a0,a5
+200004a2:	|  |           |     |      00171793          	slli	a5,a4,0x1
+200004a6:	|  |           |     |      4098                	lw	a4,0(s1)
+200004a8:	|  |           |     |      973e                	add	a4,a4,a5
+200004aa:	|  |           |     |      00075783          	lhu	a5,0(a4)
+200004ae:	|  |           |     |      8d5d                	or	a0,a0,a5
+200004b0:	|  |           |     |      00a71023          	sh	a0,0(a4)
+200004b4:	|  |           |     |      00006797          	auipc	a5,0x6
+200004b8:	|  |           |     |      17c7c783          	lbu	a5,380(a5) # 20006630 <gTmosPara>
+200004bc:	|  |           |     |  /-- c791                	beqz	a5,200004c8 <TMOS_SystemProcess+0x1c2>
+200004be:	|  |           |     |  |   0785                	addi	a5,a5,1
+200004c0:	|  |           |     |  |   00006717          	auipc	a4,0x6
+200004c4:	|  |           |     |  |   16f70823          	sb	a5,368(a4) # 20006630 <gTmosPara>
+200004c8:	|  |           |     |  \-> 00006717          	auipc	a4,0x6
+200004cc:	|  |           |     |      16874703          	lbu	a4,360(a4) # 20006630 <gTmosPara>
+200004d0:	|  |           |     |      00006797          	auipc	a5,0x6
+200004d4:	|  |           |     |      1617c783          	lbu	a5,353(a5) # 20006631 <gTmosPara+0x1>
+200004d8:	|  \-----------|-----|----- ecf77de3          	bgeu	a4,a5,200003b2 <TMOS_SystemProcess+0xac>
+200004dc:	>--------------|-----|----> 40b2                	lw	ra,12(sp)
+200004de:	|              |     |      4422                	lw	s0,8(sp)
+200004e0:	|              |     |      4492                	lw	s1,4(sp)
+200004e2:	|              |     |      4902                	lw	s2,0(sp)
+200004e4:	|              |     |      0141                	addi	sp,sp,16
+200004e6:	|              |     |      8082                	ret
+200004e8:	|              |     \----> 00179713          	slli	a4,a5,0x1
+200004ec:	|              |            9732                	add	a4,a4,a2
+200004ee:	|              |            00075703          	lhu	a4,0(a4)
+200004f2:	\--------------|----------- f76d                	bnez	a4,200004dc <TMOS_SystemProcess+0x1d6>
+200004f4:	               |            0785                	addi	a5,a5,1
+200004f6:	               \----------- b7a1                	j	2000043e <TMOS_SystemProcess+0x138>

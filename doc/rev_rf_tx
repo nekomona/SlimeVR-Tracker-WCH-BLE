@@ -1,0 +1,302 @@
+0001ba92 <RF_Tx>:
+   1ba92:	                                                 7179                	addi	sp,sp,-48
+   1ba94:	                                                 d422                	sw	s0,40(sp)
+   1ba96:	                                                 1ffeb417          	auipc	s0,0x1ffeb
+   1ba9a:	                                                 d7640413          	addi	s0,s0,-650 # 2000680c <rfConfig>
+   1ba9e:	                                                 441c                	lw	a5,8(s0)
+   1baa0:	                                                 d606                	sw	ra,44(sp)
+   1baa2:	                                                 d226                	sw	s1,36(sp)
+   1baa4:	                                                 d04a                	sw	s2,32(sp)
+   1baa6:	                                                 ce4e                	sw	s3,28(sp)
+   1baa8:	                                                 cc52                	sw	s4,24(sp)
+   1baaa:	                                                 ca56                	sw	s5,20(sp)
+   1baac:	                                                 c85a                	sw	s6,16(sp)
+   1baae:	                                                 c65e                	sw	s7,12(sp)
+   1bab0:	                                                 c462                	sw	s8,8(sp)
+   1bab2:	                                                 c266                	sw	s9,4(sp)
+   1bab4:	/----------------------------------------------- 28078963          	beqz	a5,1bd46 <RF_Tx+0x2b4>
+                        // if (rfConfig.accessAddress == 0) { return 1 }
+   1bab8:	|                                                9ac18c13          	addi	s8,gp,-1620 # 20004c74 <gptrBBReg>
+   1babc:	|                                                000c2703          	lw	a4,0(s8)
+                                                                                // a4 = &gptrBBReg
+   1bac0:	|                                                9c018a13          	addi	s4,gp,-1600 # 20004c88 <gptrRFENDReg>
+   1bac4:	|                                                8ab6                	mv	s5,a3
+   1bac6:	|                                                431c                	lw	a5,0(a4)
+                                                                                // a5 = (uint32_t)gptrBBReg->[0]
+   1bac8:	|                                                9b818993          	addi	s3,gp,-1608 # 20004c80 <gptrLLEReg>
+                                                                                // s3 = gtprLLEReg
+   1bacc:	|                                                1ffeb917          	auipc	s2,0x1ffeb
+   1bad0:	|                                                d6090913          	addi	s2,s2,-672 # 2000682c <rfInfo>
+                                                                                // s2 = rfInfo
+   1bad4:	|                                                e7f7f793          	andi	a5,a5,-385
+   1bad8:	|                                                0807e793          	ori	a5,a5,128
+                                                                                // a5 clear bit 7, 8, set bit 7
+   1badc:	|                                                c31c                	sw	a5,0(a4)
+                                                                                //  BB->[0] = ((BB->[0] & ~0x180) | 0x80);
+                                                                                //  // clear bit 8, set bit 7 of gptrBBReg->[0]
+   1bade:	|                                                000a2683          	lw	a3,0(s4)
+                                                                                // a3 = &gptrRFENDReg
+   1bae2:	|                                                ffce0737          	lui	a4,0xffce0
+   1bae6:	|                                                177d                	addi	a4,a4,-1
+   1bae8:	|                                                469c                	lw	a5,8(a3)
+                                                                                //  a5 = (uint32_t) gptrBBReg->[8];
+   1baea:	|                                                8baa                	mv	s7,a0
+   1baec:	|                                                84ae                	mv	s1,a1
+   1baee:	|                                                8ff9                	and	a5,a5,a4
+                                                                                // a5 &= 0xFFCDFFFF // clear bit 17, 20, 21   
+   1baf0:	|                                                c69c                	sw	a5,8(a3)
+                                                                                //  gptrRFENDReg->[8] &= 0xFFCDFFFF;
+   1baf2:	|                                                0009a783          	lw	a5,0(s3)
+                                                                                // a5 = &gptrLLEReg
+   1baf6:	|                                                08000713          	li	a4,128
+   1bafa:	|                                                8b32                	mv	s6,a2
+   1bafc:	|                                                cbb8                	sw	a4,80(a5)
+                                                                                // LLE[80] = 128;
+   1bafe:	|                                                00c94783          	lbu	a5,12(s2)
+   1bb02:	|                                                4cbd                	li	s9,15
+   1bb04:	|                                                8b89                	andi	a5,a5,2
+   1bb06:	|     /----------------------------------------- 1c079f63          	bnez	a5,1bce4 <RF_Tx+0x252>
+                                                                                // if(rfInfo[12] & 0x2) (frequency hopping?) then branch
+                                                                                //     get the next frequency here
+   1bb0a:	|  /--|----------------------------------------> 000c2703          	lw	a4,0(s8)
+                                                                                // a4 = &gptrBBReg
+   1bb0e:	|  |  |                                          575c                	lw	a5,44(a4)
+   1bb10:	|  |  |                                          9bf1                	andi	a5,a5,-4
+   1bb12:	|  |  |                                          0017e793          	ori	a5,a5,1
+   1bb16:	|  |  |                                          d75c                	sw	a5,44(a4)
+                                                                                // BB[44] &= ~0x2
+   1bb18:	|  |  |                                          00c94783          	lbu	a5,12(s2)
+   1bb1c:	|  |  |                                          8b89                	andi	a5,a5,2
+                                                                                // if(rfInfo[12] & 0x2) (frequency hopping?) then not branch
+   1bb1e:	|  |  |        /-------------------------------- 1e078263          	beqz	a5,1bd02 <RF_Tx+0x270>
+   1bb22:	|  |  |  /-----|-------------------------------> 4581                	li	a1,0
+   1bb24:	|  |  |  |     |                                 1ffeb517          	auipc	a0,0x1ffeb
+   1bb28:	|  |  |  |     |                                 ce954503          	lbu	a0,-791(a0) # 2000680d <rfConfig+0x1>
+   1bb2c:	|  |  |  |  /--|-------------------------------> b5bff0ef          	jal	ra,1b686 <RF_DevSetChannel>
+                                                                              // RF_DevSetChannel(rfConfig.Channel, 0);
+                                                                              // or RF_DevSetChannel(rfConfig.Frequency, 2);
+   1bb30:	|  |  |  |  |  |                                 000c2783          	lw	a5,0(s8)
+                                                                                // a5 = &gptrBBReg
+   1bb34:	|  |  |  |  |  |                                 00330637          	lui	a2,0x330
+
+   1bb38:	|  |  |  |  |  |                                 4398                	lw	a4,0(a5)
+   1bb3a:	|  |  |  |  |  |                                 e7f77713          	andi	a4,a4,-385
+   1bb3e:	|  |  |  |  |  |                                 c398                	sw	a4,0(a5)
+                                                                                // BB[0] &= 0xFFFFFE7F
+   1bb40:	|  |  |  |  |  |                                 4398                	lw	a4,0(a5)
+   1bb42:	|  |  |  |  |  |                                 e7f77713          	andi	a4,a4,-385
+   1bb46:	|  |  |  |  |  |                                 10076713          	ori	a4,a4,256
+   1bb4a:	|  |  |  |  |  |                                 c398                	sw	a4,0(a5)
+                                                                                // BB[0] |= 0x100 (set bit 8, clear stat bits)
+   1bb4c:	|  |  |  |  |  |                                 000a2683          	lw	a3,0(s4)
+   1bb50:	|  |  |  |  |  |                                 4698                	lw	a4,8(a3)
+   1bb52:	|  |  |  |  |  |                                 8f51                	or	a4,a4,a2
+   1bb54:	|  |  |  |  |  |                                 c698                	sw	a4,8(a3)
+                                                                                // RFEND[8] |= 0x330000;
+   1bb56:	|  |  |  |  |  |                                 0009a703          	lw	a4,0(s3)
+   1bb5a:	|  |  |  |  |  |                                 0da00693          	li	a3,218
+   1bb5e:	|  |  |  |  |  |                                 cb34                	sw	a3,80(a4)
+                                                                                // LLE[80] = 218;
+   1bb60:	|  |  |  |  |  |                                 1ffeb697          	auipc	a3,0x1ffeb
+   1bb64:	|  |  |  |  |  |                                 cac6c683          	lbu	a3,-852(a3) # 2000680c <rfConfig>
+   1bb68:	|  |  |  |  |  |                                 0406f613          	andi	a2,a3,64
+   1bb6c:	|  |  |  |  |  |  /----------------------------- 1a060463          	beqz	a2,1bd14 <RF_Tx+0x282>
+                                                                                // if (rfConfig.LLEMode BIT6 == 0 (channel)) then branch
+   1bb70:	|  |  |  |  |  |  |                              404c                	lw	a1,4(s0)
+   1bb72:	|  |  |  |  |  |  |                              ffdb9637          	lui	a2,0xffdb9
+   1bb76:	|  |  |  |  |  |  |                              81060613          	addi	a2,a2,-2032
+   1bb7a:	|  |  |  |  |  |  |                              95b2                	add	a1,a1,a2
+                                                                                        // a1 = rfConfig.Frequency - 2390000
+   1bb7c:	|  |  |  |  |  |  |                              6661                	lui	a2,0x18
+   1bb7e:	|  |  |  |  |  |  |                              6a060613          	addi	a2,a2,1696 # 186a0 <llConnectionParamReq+0x12>
+   1bb82:	|  |  |  |  |  |  +----------------------------- 18b67963          	bgeu	a2,a1,1bd14 <RF_Tx+0x282>
+                                                                                        // if (a1 < 100000) then branch // frequency valid
+   1bb86:	|  |  |  |  |  |  |                              0c800613          	li	a2,200
+                                                                                        // valid : a2=160, invalid : a2=200
+   1bb8a:	|  |  |  |  |  |  |  /-------------------------> d370                	sw	a2,100(a4)
+                                                                                // LLE[100] = a2
+   1bb8c:	|  |  |  |  |  |  |  |                           4410                	lw	a2,8(s0)
+   1bb8e:	|  |  |  |  |  |  |  |                           8a85                	andi	a3,a3,1
+                                                                                 // rf mode BIT0 here in A3
+   1bb90:	|  |  |  |  |  |  |  |                           c790                	sw	a2,8(a5)
+                                                                                // BB[8] = rfConfig.accessAddress
+   1bb92:	|  |  |  |  |  |  |  |                           4450                	lw	a2,12(s0)
+   1bb94:	|  |  |  |  |  |  |  |                           c3d0                	sw	a2,4(a5)
+                                                                                // BB[4] = rfConfig.CRCInit
+   1bb96:	|  |  |  |  |  |  |  |                           c354                	sw	a3,4(a4)
+                                                                                // LLE[4] = rfConfig.LLEMode & 0x1;
+   1bb98:	|  |  |  |  |  |  |  |                           00e94783          	lbu	a5,14(s2)
+   1bb9c:	|  |  |  |  |  |  |  |                           0027e793          	ori	a5,a5,2
+   1bba0:	|  |  |  |  |  |  |  |                           1ffeb717          	auipc	a4,0x1ffeb
+   1bba4:	|  |  |  |  |  |  |  |                           c8f70d23          	sb	a5,-870(a4) # 2000683a <rfInfo+0xe>
+                                                                                // rfInfo[14] |= 0x2;
+   1bba8:	|  |  |  |  |  |  |  |                           1ffeb797          	auipc	a5,0x1ffeb
+   1bbac:	|  |  |  |  |  |  |  |                           c95782a3          	sb	s5,-891(a5) # 2000682d <rfInfo+0x1>
+                                                                                // rfInfo.txRxType = rxType;
+   1bbb0:	|  |  |  |  |  |  |  |                           1ffeb797          	auipc	a5,0x1ffeb
+   1bbb4:	|  |  |  |  |  |  |  |                           c7678e23          	sb	s6,-900(a5) # 2000682c <rfInfo>
+                                                                                // rfInfo.txTxType = txType
+   1bbb8:	|  |  |  |  |  |  |  |                           1ffeba97          	auipc	s5,0x1ffeb
+   1bbbc:	|  |  |  |  |  |  |  |                           c38a8a93          	addi	s5,s5,-968 # 200067f0 <gBleIPPara>
+   1bbc0:	|  |  |  |  |  |  |  |                           014aa503          	lw	a0,20(s5)
+                                                                                // a0 = gBleIPPara.txBuffer
+   1bbc4:	|  |  |  |  |  |  |  |  /----------------------- 140b8b63          	beqz	s7,1bd1a <RF_Tx+0x288>
+   1bbc8:	|  |  |  |  |  |  |  |  |                        01650023          	sb	s6,0(a0)
+                                                                                // gBleIPPara.txBuffer[0] = rxType;
+                                                                                // if (txBuf) {
+   1bbcc:	|  |  |  |  |  |  |  |  |                        009500a3          	sb	s1,1(a0)
+                                                                                //     gBleIPPara.txBuffer[1] = pktLen;
+   1bbd0:	|  |  |  |  |  |  |  |  |                        8626                	mv	a2,s1
+   1bbd2:	|  |  |  |  |  |  |  |  |                        85de                	mv	a1,s7
+   1bbd4:	|  |  |  |  |  |  |  |  |                        0509                	addi	a0,a0,2
+   1bbd6:	|  |  |  |  |  |  |  |  |                        1ffe4097          	auipc	ra,0x1ffe4
+   1bbda:	|  |  |  |  |  |  |  |  |                        4fa080e7          	jalr	1274(ra) # 200000d0 <tmos_memcpy>
+                                                                                //     tmos_memcpy(gBleIPPara.txBuffer+2, txBuf, pktLen);
+                                                                                // 
+                                                                                // }
+   1bbde:	|  |  |  |  |  |  |  |  |  /-------------------> 0009a783          	lw	a5,0(s3)
+   1bbe2:	|  |  |  |  |  |  |  |  |  |                     014aa703          	lw	a4,20(s5)
+   1bbe6:	|  |  |  |  |  |  |  |  |  |                     4581                	li	a1,0
+   1bbe8:	|  |  |  |  |  |  |  |  |  |                     00000517          	auipc	a0,0x0
+   1bbec:	|  |  |  |  |  |  |  |  |  |                     bee50513          	addi	a0,a0,-1042 # 1b7d6 <RF_TxProcess>
+   1bbf0:	|  |  |  |  |  |  |  |  |  |                     dbb8                	sw	a4,112(a5)
+                                                                                // LLE[112] = gBleIPPara.txBuffer
+   1bbf2:	|  |  |  |  |  |  |  |  |  |                     1ffeb797          	auipc	a5,0x1ffeb
+   1bbf6:	|  |  |  |  |  |  |  |  |  |                     c00780a3          	sb	zero,-1023(a5) # 200067f3 <gBleIPPara+0x3>
+                                                                                // gBleIPPara[3] = 0
+   1bbfa:	|  |  |  |  |  |  |  |  |  |                     1ffeb797          	auipc	a5,0x1ffeb
+   1bbfe:	|  |  |  |  |  |  |  |  |  |                     be078d23          	sb	zero,-1030(a5) # 200067f4 <gBleIPPara+0x4>
+                                                                                // gBleIPPara[4] = 0
+   1bc02:	|  |  |  |  |  |  |  |  |  |                     f10ea0ef          	jal	ra,6312 <TMOS_ProcessRegister>
+                                                                                // TMOS_ProcessRegister(RF_TxProcess, 0);
+   1bc06:	|  |  |  |  |  |  |  |  |  |                     d78ff0ef          	jal	ra,1b17e <ll_multi_states_check>
+                                                                                // ll_multi_states_check();
+   1bc0a:	|  |  |  |  |  |  |  |  |  |                     478d                	li	a5,3
+   1bc0c:	|  |  |  |  |  |  |  |  |  |                     1ffeb717          	auipc	a4,0x1ffeb
+   1bc10:	|  |  |  |  |  |  |  |  |  |                     bef705a3          	sb	a5,-1045(a4) # 200067f7 <gBleIPPara+0x7>
+                                                                                // gBleIPPara[7] = 3
+   1bc14:	|  |  |  |  |  |  |  |  |  |                     00c94783          	lbu	a5,12(s2)
+   1bc18:	|  |  |  |  |  |  |  |  |  |                     8b89                	andi	a5,a5,2
+   1bc1a:	|  |  |  |  |  |  |  |  |  |  /----------------- c3b9                	beqz	a5,1bc60 <RF_Tx+0x1ce>
+                                                                                // if ( (rfInfo[12] & 0x2) == 0 ) { branch }
+   1bc1c:	|  |  |  |  |  |  |  |  |  |  |                  0009a703          	lw	a4,0(s3)
+   1bc20:	|  |  |  |  |  |  |  |  |  |  |              /-> 537c                	lw	a5,100(a4)
+   1bc22:	|  |  |  |  |  |  |  |  |  |  |              \-- fffd                	bnez	a5,1bc20 <RF_Tx+0x18e>
+                                                                                // while(LLE[100] != 0); // Wait for IRQ clear flag
+   1bc24:	|  |  |  |  |  |  |  |  |  |  |                  8e018793          	addi	a5,gp,-1824 # 20004ba8 <fnGetClockCBs>
+   1bc28:	|  |  |  |  |  |  |  |  |  |  |                  439c                	lw	a5,0(a5)
+   1bc2a:	|  |  |  |  |  |  |  |  |  |  |                  9782                	jalr	a5
+                                                                                // a0 = fnGetClock()
+   1bc2c:	|  |  |  |  |  |  |  |  |  |  |                  1ffeb717          	auipc	a4,0x1ffeb
+   1bc30:	|  |  |  |  |  |  |  |  |  |  |                  9c870713          	addi	a4,a4,-1592 # 200065f4 <ble>
+   1bc34:	|  |  |  |  |  |  |  |  |  |  |                  01670703          	lb	a4,22(a4)
+   1bc38:	|  |  |  |  |  |  |  |  |  |  |                  00892783          	lw	a5,8(s2)
+   1bc3c:	|  |  |  |  |  |  |  |  |  |  |     /----------- 0e075263          	bgez	a4,1bd20 <RF_Tx+0x28e>
+                                                                                // if (ble[22] > 0) { branch }
+   1bc40:	|  |  |  |  |  |  |  |  |  |  |     |     /----> 8d1d                	sub	a0,a0,a5
+                                                                                // a0 -= rfInfo[0x8];
+   1bc42:	|  |  |  |  |  |  |  |  |  |  |  /--|-----|----> 00044703          	lbu	a4,0(s0)
+   1bc46:	|  |  |  |  |  |  |  |  |  |  |  |  |     |      810d                	srli	a0,a0,0x3
+   1bc48:	|  |  |  |  |  |  |  |  |  |  |  |  |     |      014aa783          	lw	a5,20(s5)
+   1bc4c:	|  |  |  |  |  |  |  |  |  |  |  |  |     |      8b21                	andi	a4,a4,8
+   1bc4e:	|  |  |  |  |  |  |  |  |  |  |  |  |  /--|----- c36d                	beqz	a4,1bd30 <RF_Tx+0x29e>
+                                                                                // if ( (rfConfig.LLEMode & 0x8) == 0) { write sth, return } // unknown bit3
+   1bc50:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      00800737          	lui	a4,0x800
+   1bc54:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      0562                	slli	a0,a0,0x18
+   1bc56:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      2ff70713          	addi	a4,a4,767 # 8002ff <__fsymtab_end+0x7d6dcf>
+   1bc5a:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      8d59                	or	a0,a0,a4
+   1bc5c:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      c388                	sw	a0,0(a5)
+   1bc5e:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      4489                	li	s1,2
+   1bc60:	|  |  |  |  |  |  |  |  |  |  >--|--|--|--|----> 1ffeb597          	auipc	a1,0x1ffeb
+
+   1bc64:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      bac5c583          	lbu	a1,-1108(a1) # 2000680c <rfConfig>
+   1bc68:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      8591                	srai	a1,a1,0x4
+   1bc6a:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      4501                	li	a0,0
+   1bc6c:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      8626                	mv	a2,s1
+   1bc6e:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      898d                	andi	a1,a1,3
+                                                                                // rsh 4, a1 = bit4-5 (LLE_PHY_TYPE)
+   1bc70:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      1ffe5097          	auipc	ra,0x1ffe5
+   1bc74:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      2f8080e7          	jalr	760(ra) # 20000f68 <ll_tx_wait_finish>
+                                                                                // actual tx here? ll_tx_wait_finish(0, LLE_PHY_TYPE, 2)
+   1bc78:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      000a2703          	lw	a4,0(s4)
+   1bc7c:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      4501                	li	a0,0
+   1bc7e:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      575c                	lw	a5,44(a4)
+   1bc80:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      8385                	srli	a5,a5,0x1
+   1bc82:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |      8b85                	andi	a5,a5,1
+   1bc84:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  /-- c3b9                	beqz	a5,1bcca <RF_Tx+0x238>
+                                                                                // if (ble[44] & 0x2) {}
+   1bc86:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   405c                	lw	a5,4(s0)
+   1bc88:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   65c1                	lui	a1,0x10
+   1bc8a:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   a0058593          	addi	a1,a1,-1536 # fa00 <smNextPairingState+0x14>
+   1bc8e:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   c1878793          	addi	a5,a5,-1000
+   1bc92:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   02b7d6b3          	divu	a3,a5,a1
+   1bc96:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   fe100837          	lui	a6,0xfe100
+   1bc9a:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   187d                	addi	a6,a6,-1
+   1bc9c:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   02b7f7b3          	remu	a5,a5,a1
+   1bca0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   8afd                	andi	a3,a3,31
+   1bca2:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   01469613          	slli	a2,a3,0x14
+   1bca6:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4374                	lw	a3,68(a4)
+   1bca8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   0106f6b3          	and	a3,a3,a6
+   1bcac:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   8ed1                	or	a3,a3,a2
+   1bcae:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   c374                	sw	a3,68(a4)
+   1bcb0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   0fa00693          	li	a3,250
+   1bcb4:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   fffc0637          	lui	a2,0xfffc0
+   1bcb8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   07aa                	slli	a5,a5,0xa
+   1bcba:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   02d7d7b3          	divu	a5,a5,a3
+   1bcbe:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4374                	lw	a3,68(a4)
+   1bcc0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   8ef1                	and	a3,a3,a2
+   1bcc2:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   07ba                	slli	a5,a5,0xe
+   1bcc4:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   83b9                	srli	a5,a5,0xe
+   1bcc6:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   8fd5                	or	a5,a5,a3
+   1bcc8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   c37c                	sw	a5,68(a4)
+                                                                                // }
+   1bcca:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  >-> 50b2                	lw	ra,44(sp)
+   1bccc:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   5422                	lw	s0,40(sp)
+   1bcce:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   5492                	lw	s1,36(sp)
+   1bcd0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   5902                	lw	s2,32(sp)
+   1bcd2:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   49f2                	lw	s3,28(sp)
+   1bcd4:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4a62                	lw	s4,24(sp)
+   1bcd6:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4ad2                	lw	s5,20(sp)
+   1bcd8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4b42                	lw	s6,16(sp)
+   1bcda:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4bb2                	lw	s7,12(sp)
+   1bcdc:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4c22                	lw	s8,8(sp)
+   1bcde:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   4c92                	lw	s9,4(sp)
+   1bce0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   6145                	addi	sp,sp,48
+   1bce2:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   8082                	ret
+   1bce4:	|  |  >--|--|--|--|--|--|--|--|--|--|--|--|--|-> 1ffe6097          	auipc	ra,0x1ffe6
+   1bce8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   806080e7          	jalr	-2042(ra) # 200014ea <RF_FrequencyHoppingGet>
+   1bcec:	|  |  +--|--|--|--|--|--|--|--|--|--|--|--|--|-- feacfce3          	bgeu	s9,a0,1bce4 <RF_Tx+0x252>
+                                                                           // while ( (a0 = RF_FrequencyHoppingGet() ) < 16 );
+   1bcf0:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1bcf4:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   b367c783          	lbu	a5,-1226(a5) # 20006826 <rfConfig+0x1a>
+   1bcf8:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   0796                	slli	a5,a5,0x5
+   1bcfa:	|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |   17c1                	addi	a5,a5,-16
+   1bcfc:	|  |  \--|--|--|--|--|--|--|--|--|--|--|--|--|-- fea7e4e3          	bltu	a5,a0,1bce4 <RF_Tx+0x252>
+   1bd00:	|  \-----|--|--|--|--|--|--|--|--|--|--|--|--|-- b529                	j	1bb0a <RF_Tx+0x78>
+
+   1bd02:	|        |  |  \--|--|--|--|--|--|--|--|--|--|-> 00044783          	lbu	a5,0(s0)
+   1bd06:	|        |  |     |  |  |  |  |  |  |  |  |  |   0407f793          	andi	a5,a5,64
+   1bd0a:	|        \--|-----|--|--|--|--|--|--|--|--|--|-- e0078ce3          	beqz	a5,1bb22 <RF_Tx+0x90>
+                                                                           // if (rfConfig & 0x40) branch // Channel freq
+   1bd0e:	|           |     |  |  |  |  |  |  |  |  |  |   4589                	li	a1,2
+   1bd10:	|           |     |  |  |  |  |  |  |  |  |  |   4048                	lw	a0,4(s0)
+   1bd12:	|           \-----|--|--|--|--|--|--|--|--|--|-- bd29                	j	1bb2c <RF_Tx+0x9a>
+   1bd14:	|                 \--|--|--|--|--|--|--|--|--|-> 0a000613          	li	a2,160
+   1bd18:	|                    \--|--|--|--|--|--|--|--|-- bd8d                	j	1bb8a <RF_Tx+0xf8>
+   1bd1a:	|                       \--|--|--|--|--|--|--|-> 01652023          	sw	s6,0(a0)
+                                                                                        // a0 -> 0 = pktRxType
+   1bd1e:	|                          \--|--|--|--|--|--|-- b5c1                	j	1bbde <RF_Tx+0x14c>
+   1bd20:	|                             |  |  \--|--\--|-X f2f570e3          	bgeu	a0,a5,1bc40 <RF_Tx+0x1ae>
+   1bd24:	|                             |  |     |     |   a8c00737          	lui	a4,0xa8c00
+   1bd28:	|                             |  |     |     |   40f707b3          	sub	a5,a4,a5
+   1bd2c:	|                             |  |     |     |   953e                	add	a0,a0,a5
+   1bd2e:	|                             |  \-----|-----|-- bf11                	j	1bc42 <RF_Tx+0x1b0>
+   1bd30:	|                             |        \-----|-> 0489                	addi	s1,s1,2
+   1bd32:	|                             |              |   0ff4f493          	andi	s1,s1,255
+   1bd36:	|                             |              |   009780a3          	sb	s1,1(a5)
+   1bd3a:	|                             |              |   97a6                	add	a5,a5,s1
+   1bd3c:	|                             |              |   00078023          	sb	zero,0(a5)
+   1bd40:	|                             |              |   00a780a3          	sb	a0,1(a5)
+   1bd44:	|                             \--------------|-- bf31                	j	1bc60 <RF_Tx+0x1ce>
+   1bd46:	\--------------------------------------------|-> 4505                	li	a0,1
+   1bd48:	                                             \-- b749                	j	1bcca <RF_Tx+0x238>

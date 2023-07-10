@@ -1,0 +1,149 @@
+int RF_Config (rfConfig_t * NewRfConfig) {
+    if (!NewRfConfig->rfStatusCB) { 
+        return 1; 
+    }
+    if ( (NewRfConfig->LLEMode & RF_FREQUENCY) && !NewRfConfig->Frequency ) { 
+        return 2; 
+    }
+
+    tmos_memset(rfConfig, 0, 32);
+    tmos_memcpy(rfConfig, NewRfConfig, 32);
+
+    if (!rfConfig.HeartPeriod) { 
+        rfConfig.HeartPeriod = 40; 
+    }
+    if (!rfConfig.HopPeriod) { 
+        rfConfig.HopPeriod = 8; 
+    }
+    if (!rfConfig.HopIndex) { 
+        rfConfig.HopIndex = 17; 
+    }
+    if (!rfConfig.RxMaxLen) { 
+        rfConfig.RxMaxLen = 251; 
+    }
+    if (!rfConfig.TxMaxLen) { 
+        rfConfig.TxMaxLen = 251; 
+    }
+
+    if (rfInfo) { 
+        tmos_memory_free(rfInfo->autoBuff); 
+    }
+
+    rfInfo->autoBuff = 0;
+    if (rfConfig.LLEMode & LLE_MODE_AUTO ) {
+        rfInfo->autoBuff = tmos_memory_allocate(rfConfig.rxMaxLen + 2, 73);
+    }
+
+    (uint8_t)rfInfo->[0xf] = 0;
+    (uint32_t)rfInfo->[0x14] = 0;
+
+    return 0;
+}
+
+0001b974 <RF_Config>:
+   1b974:	          491c                	lw	a5,16(a0)
+   1b976:	/-------- 10078c63          	beqz	a5,1ba8e <RF_Config+0x11a>
+                                    // if (!NewRfConfig->rfStatusCB) { return 1; }
+   1b97a:	|         1141                	addi	sp,sp,-16
+   1b97c:	|         c422                	sw	s0,8(sp)
+   1b97e:	|         c606                	sw	ra,12(sp)
+   1b980:	|         00054783          	lbu	a5,0(a0)
+   1b984:	|         842a                	mv	s0,a0
+   1b986:	|         0407f793          	andi	a5,a5,64
+   1b98a:	|     /-- c781                	beqz	a5,1b992 <RF_Config+0x1e>
+                                    // if ( (NewRfConfig->LLEMode & RF_FREQUENCY) && !NewRfConfig->Frequency ) { return 2; }
+   1b98c:	|     |   415c                	lw	a5,4(a0)
+   1b98e:	|     |   4509                	li	a0,2
+   1b990:	|  /--|-- cbfd                	beqz	a5,1ba86 <RF_Config+0x112>
+   1b992:	|  |  \-> 02000613          	li	a2,32
+   1b996:	|  |      4581                	li	a1,0
+   1b998:	|  |      1ffeb517          	auipc	a0,0x1ffeb
+   1b99c:	|  |      e7450513          	addi	a0,a0,-396 # 2000680c <rfConfig>
+   1b9a0:	|  |      1ffe4097          	auipc	ra,0x1ffe4
+   1b9a4:	|  |      768080e7          	jalr	1896(ra) # 20000108 <tmos_memset>
+                                    // tmos_memset(rfConfig, 0, 32);
+   1b9a8:	|  |      85a2                	mv	a1,s0
+   1b9aa:	|  |      02000613          	li	a2,32
+   1b9ae:	|  |      1ffeb517          	auipc	a0,0x1ffeb
+   1b9b2:	|  |      e5e50513          	addi	a0,a0,-418 # 2000680c <rfConfig>
+   1b9b6:	|  |      1ffe4097          	auipc	ra,0x1ffe4
+   1b9ba:	|  |      71a080e7          	jalr	1818(ra) # 200000d0 <tmos_memcpy>
+                                    // tmos_memcpy(rfConfig, NewRfConfig, 32);
+   1b9be:	|  |      1ffeb797          	auipc	a5,0x1ffeb
+   1b9c2:	|  |      e677c783          	lbu	a5,-409(a5) # 20006825 <rfConfig+0x19>
+                                                // a5 = rfConfig->HeartPeriod;
+   1b9c6:	|  |      1ffeb417          	auipc	s0,0x1ffeb
+   1b9ca:	|  |      e4640413          	addi	s0,s0,-442 # 2000680c <rfConfig>
+   1b9ce:	|  |  /-- e799                	bnez	a5,1b9dc <RF_Config+0x68>
+   1b9d0:	|  |  |   02800793          	li	a5,40
+   1b9d4:	|  |  |   1ffeb717          	auipc	a4,0x1ffeb
+   1b9d8:	|  |  |   e4f708a3          	sb	a5,-431(a4) # 20006825 <rfConfig+0x19>
+                                    // if (!rfConfig.HeartPeriod) { rfConfig.HeartPeriod = 40; }
+   1b9dc:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1b9e0:	|  |      e4a7c783          	lbu	a5,-438(a5) # 20006826 <rfConfig+0x1a>
+   1b9e4:	|  |  /-- e791                	bnez	a5,1b9f0 <RF_Config+0x7c>
+   1b9e6:	|  |  |   47a1                	li	a5,8
+   1b9e8:	|  |  |   1ffeb717          	auipc	a4,0x1ffeb
+   1b9ec:	|  |  |   e2f70f23          	sb	a5,-450(a4) # 20006826 <rfConfig+0x1a>
+                                    // if (!rfConfig.HopPeriod) { rfConfig.HopPeriod = 8; }
+   1b9f0:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1b9f4:	|  |      e377c783          	lbu	a5,-457(a5) # 20006827 <rfConfig+0x1b>
+   1b9f8:	|  |  /-- e791                	bnez	a5,1ba04 <RF_Config+0x90>
+   1b9fa:	|  |  |   47c5                	li	a5,17
+   1b9fc:	|  |  |   1ffeb717          	auipc	a4,0x1ffeb
+   1ba00:	|  |  |   e2f705a3          	sb	a5,-469(a4) # 20006827 <rfConfig+0x1b>
+                                    // if (!rfConfig.HopIndex) { rfConfig.HopIndex = 17; }
+   1ba04:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1ba08:	|  |      e247c783          	lbu	a5,-476(a5) # 20006828 <rfConfig+0x1c>
+   1ba0c:	|  |  /-- e791                	bnez	a5,1ba18 <RF_Config+0xa4>
+   1ba0e:	|  |  |   57ed                	li	a5,-5
+   1ba10:	|  |  |   1ffeb717          	auipc	a4,0x1ffeb
+   1ba14:	|  |  |   e0f70c23          	sb	a5,-488(a4) # 20006828 <rfConfig+0x1c>
+                                    // if (!rfConfig.RxMaxLen) { rfConfig.RxMaxLen = 251; }
+   1ba18:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1ba1c:	|  |      e117c783          	lbu	a5,-495(a5) # 20006829 <rfConfig+0x1d>
+   1ba20:	|  |  /-- e791                	bnez	a5,1ba2c <RF_Config+0xb8>
+   1ba22:	|  |  |   57ed                	li	a5,-5
+   1ba24:	|  |  |   1ffeb717          	auipc	a4,0x1ffeb
+   1ba28:	|  |  |   e0f702a3          	sb	a5,-507(a4) # 20006829 <rfConfig+0x1d>
+                                    // if (!rfConfig.TxMaxLen) { rfConfig.TxMaxLen = 251; }
+   1ba2c:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1ba30:	|  |      e0078793          	addi	a5,a5,-512 # 2000682c <rfInfo>
+   1ba34:	|  |      43c8                	lw	a0,4(a5)
+   1ba36:	|  |  /-- c509                	beqz	a0,1ba40 <RF_Config+0xcc>
+   1ba38:	|  |  |   1ffe6097          	auipc	ra,0x1ffe6
+   1ba3c:	|  |  |   cec080e7          	jalr	-788(ra) # 20001724 <tmos_memory_free>
+                                    // if (rfInfo) { tmos_memory_free(); }
+   1ba40:	|  |  \-> 1ffeb797          	auipc	a5,0x1ffeb
+   1ba44:	|  |      de07a823          	sw	zero,-528(a5) # 20006830 <rfInfo+0x4>
+                                    // rfInfo->autoBuff = 0;
+   1ba48:	|  |      00044783          	lbu	a5,0(s0)
+   1ba4c:	|  |      8b85                	andi	a5,a5,1
+   1ba4e:	|  |  /-- c385                	beqz	a5,1ba6e <RF_Config+0xfa>
+                                    // if (rfConfig.LLEMode & LLE_MODE_AUTO ) {
+   1ba50:	|  |  |   1ffeb517          	auipc	a0,0x1ffeb
+   1ba54:	|  |  |   dd954503          	lbu	a0,-551(a0) # 20006829 <rfConfig+0x1d>
+   1ba58:	|  |  |   04900593          	li	a1,73
+   1ba5c:	|  |  |   0509                	addi	a0,a0,2
+   1ba5e:	|  |  |   1ffe6097          	auipc	ra,0x1ffe6
+   1ba62:	|  |  |   c00080e7          	jalr	-1024(ra) # 2000165e <tmos_memory_allocate>
+   1ba66:	|  |  |   1ffeb797          	auipc	a5,0x1ffeb
+   1ba6a:	|  |  |   dca7a523          	sw	a0,-566(a5) # 20006830 <rfInfo+0x4>
+                                    //     rfInfo->autoBuff = tmos_memory_allocate(rfConfig.rxMaxLen + 2, 73);
+                                    // }
+   1ba6e:	|  |  \-> 00144783          	lbu	a5,1(s0)
+   1ba72:	|  |      4501                	li	a0,0
+   1ba74:	|  |      1ffeb717          	auipc	a4,0x1ffeb
+   1ba78:	|  |      dcf703a3          	sb	a5,-569(a4) # 2000683b <rfInfo+0xf>
+                                    // (uint8_t)rfInfo->[0xf] = 0;
+   1ba7c:	|  |      441c                	lw	a5,8(s0)
+   1ba7e:	|  |      1ffeb717          	auipc	a4,0x1ffeb
+   1ba82:	|  |      dcf72123          	sw	a5,-574(a4) # 20006840 <rfInfo+0x14>
+                                    // (uint32_t)rfInfo->[0x14] = 0;
+   1ba86:	|  \----> 40b2                	lw	ra,12(sp)
+   1ba88:	|         4422                	lw	s0,8(sp)
+   1ba8a:	|         0141                	addi	sp,sp,16
+                                    // return 0;
+   1ba8c:	|         8082                	ret
+   1ba8e:	\-------> 4505                	li	a0,1
+   1ba90:	          8082                	ret

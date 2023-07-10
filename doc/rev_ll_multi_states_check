@@ -1,0 +1,20 @@
+0001b17e <ll_multi_states_check>:
+   1b17e:	    1ffeb797          	auipc	a5,0x1ffeb
+   1b182:	    67b7c783          	lbu	a5,1659(a5) # 200067f9 <gBleIPPara+0x9>
+   1b186:	/-- e78d                	bnez	a5,1b1b0 <ll_multi_states_check+0x32>
+                                // if (gBleIPPara[9] != 0) return;
+   1b188:	|   1ffeb717          	auipc	a4,0x1ffeb
+   1b18c:	|   66f74703          	lbu	a4,1647(a4) # 200067f7 <gBleIPPara+0x7>
+   1b190:	|   ffa70793          	addi	a5,a4,-6
+   1b194:	|   0ff7f793          	andi	a5,a5,255
+   1b198:	|   4689                	li	a3,2
+   1b19a:	+-- 00f6eb63          	bltu	a3,a5,1b1b0 <ll_multi_states_check+0x32>
+                                // if ( 2 < (gBleIPPara[7] - 6) ) return;
+   1b19e:	|   1ffeb797          	auipc	a5,0x1ffeb
+   1b1a2:	|   64e78d23          	sb	a4,1626(a5) # 200067f8 <gBleIPPara+0x8>
+                                // gBleIPPara[8] = gBleIPPara[7];
+   1b1a6:	|   4785                	li	a5,1
+   1b1a8:	|   1ffeb717          	auipc	a4,0x1ffeb
+   1b1ac:	|   64f708a3          	sb	a5,1617(a4) # 200067f9 <gBleIPPara+0x9>
+                                // gBleIPPara[9] = 1
+   1b1b0:	\-> 8082                	ret
