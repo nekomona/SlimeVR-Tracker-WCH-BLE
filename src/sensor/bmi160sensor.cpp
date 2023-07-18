@@ -111,7 +111,7 @@ void BMI160Sensor::motionSetup() {
     fusion.setup();
 }
 
-#define FIFO_PACKET_LEN 40
+#define FIFO_PACKET_LEN 20
 
 void BMI160Sensor::motionLoop() {
     readFIFO();
@@ -131,6 +131,7 @@ void BMI160Sensor::motionLoop() {
 
         fusion.update();
     }
+    fifo.length = 0;
 }
 
 void BMI160Sensor::readFIFO() {

@@ -90,7 +90,7 @@ constexpr double BMI160_ACCEL_TYPICAL_SENSITIVITY_LSB = BMI160_ACCEL_SENSITIVITY
 constexpr float BMI160_ASCALE = 1.0f / BMI160_ACCEL_TYPICAL_SENSITIVITY_LSB;
 
 // Scale conversion steps: LSB/°/s -> °/s -> step/°/s -> step/rad/s
-constexpr float BMI160_GSCALE = ((32768. / BMI160_GYRO_TYPICAL_SENSITIVITY_LSB) / 32768.);
+constexpr float BMI160_GSCALE = 1.0f / BMI160_GYRO_TYPICAL_SENSITIVITY_LSB;
 
 struct BMI160Packet9Axis {
     int16_t mag[4];

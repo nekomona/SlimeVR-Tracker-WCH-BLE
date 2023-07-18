@@ -41,6 +41,6 @@ void FusionClass::getResult(FusionReport *obuf) {
 	obuf->q[2] = INT16_TO_UINT16(TO_FIXED_14(ahrs.quaternion.element.y));
 	obuf->q[3] = INT16_TO_UINT16(TO_FIXED_10(ahrs.quaternion.element.z));
 	obuf->a[0] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.x));
-	obuf->a[1] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.z));
+	obuf->a[1] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.y));
 	obuf->a[2] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.z));
 }
