@@ -212,7 +212,7 @@ void cdc_acm_data_send_with_dtr_test(void)
 
 int _write(int fd, char *buf, int size)
 {
-    // while (ep_tx_busy_flag);
+    while (ep_tx_busy_flag);
     ep_tx_busy_flag = true;
     memcpy(write_buffer, buf, size);
     usbd_ep_start_write(CDC_IN_EP, write_buffer, size);

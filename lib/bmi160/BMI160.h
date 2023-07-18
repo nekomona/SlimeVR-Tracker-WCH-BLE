@@ -33,8 +33,8 @@ THE SOFTWARE.
 #ifndef _BMI160_H_
 #define _BMI160_H_
 
-#include "Arduino.h"
-#include "I2Cdev.h"
+#include <ArduinoHAL.h>
+#include "SPIdev.h"
 
 #define BMI160_SPI_READ_BIT         7
 
@@ -56,6 +56,8 @@ THE SOFTWARE.
 #define BMI160_RA_MAG_IF_3_WRITE_RA    0x4E
 #define BMI160_RA_MAG_IF_4_WRITE_VALUE 0x4F
 #define BMI160_RA_IF_CONF              0x6B
+
+#define BMI160_IF_CONF_SPI3 1 << 0
 
 #define BMI160_IF_CONF_MODE_PRI_AUTO_SEC_OFF 0 << 4
 #define BMI160_IF_CONF_MODE_PRI_I2C_SEC_OIS  1 << 4

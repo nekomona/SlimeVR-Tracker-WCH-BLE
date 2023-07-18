@@ -25,7 +25,7 @@ THE SOFTWARE.
 ===============================================
 */
 #include "BMI160.h"
-#include "I2Cdev.h"
+#include <SPIdev.h>
 
 #define BMI160_CHIP_ID 0xD1
 #define BMI160C3_CHIP_ID 0xD3
@@ -40,7 +40,7 @@ THE SOFTWARE.
 
 /******************************************************************************/
 
-class I2CdevMod : public I2Cdev {
+class I2CdevMod : public SPIdev {
     public:
         static bool writeBits(uint8_t devAddr, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t data) {
             uint8_t b;
@@ -55,9 +55,9 @@ class I2CdevMod : public I2Cdev {
                 return false;
             }
         }
-        static int8_t readBits(uint8_t devAddr, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t *data, uint16_t timeout=I2Cdev::readTimeout) {
+        static int8_t readBits(uint8_t devAddr, uint8_t regAddr, uint8_t bitStart, uint8_t length, uint8_t *data) {
             uint8_t count, b;
-            if ((count = readByte(devAddr, regAddr, &b, timeout)) != 0) {
+            if ((count = readByte(devAddr, regAddr, &b)) != 0) {
                 uint8_t mask = ((1 << length) - 1) << bitStart;
                 b &= mask;
                 b >>= bitStart;
@@ -80,6 +80,10 @@ void BMI160::initialize(uint8_t addr,
     devAddr = addr;
     /* Issue a soft-reset to bring the device into a clean state */
     setRegister(BMI160_RA_CMD, BMI160_CMD_SOFT_RESET);
+    delay(12);
+
+    delay(12);
+    setRegister(BMI160_RA_IF_CONF, BMI160_IF_CONF_SPI3);
     delay(12);
 
     setGyroRate(gyroRate);
