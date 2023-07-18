@@ -347,7 +347,7 @@ uint16_t HidEmu_ProcessEvent(uint8_t task_id, uint16_t events)
 
         GPIOA_InverseBits(GPIO_Pin_8);
 
-        tmos_start_task(hidEmuTaskId, START_REPORT_EVT, 1600);
+        tmos_start_task(hidEmuTaskId, START_REPORT_EVT, 16);
         
         return (events ^ START_REPORT_EVT);
     }
