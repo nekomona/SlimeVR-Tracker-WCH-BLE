@@ -13,6 +13,8 @@ extern "C" void cdc_acm_init(void);
 BMI160Sensor sensor(0);
 
 
+FusionReport rpt;
+
 int main(void)
 {
     SetSysClock(CLK_SOURCE_PLL_60MHz);
@@ -44,6 +46,11 @@ int main(void)
         extern volatile uint8_t dtr_enable;
         if (dtr_enable) {
             sensor.motionLoop();
+            sensor.fusion.getResult(&rpt);
+            printf("Fr: %6d %6d %6d %6d %6d %6d %6d\n", 
+                        rpt.q[0], rpt.q[1], rpt.q[2], rpt.q[3], 
+                        rpt.a[0], rpt.a[1], rpt.a[2]
+                    );
         }
     }
     return 0;
