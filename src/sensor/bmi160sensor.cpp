@@ -141,6 +141,8 @@ void BMI160Sensor::readFIFO() {
 
     if (fifo.length <= 1) return;
     if (fifo.length > sizeof(fifo.data)) {
+        imu.getFIFOBytes(fifo.data, FIFO_PACKET_LEN);
+        fifo.length = FIFO_PACKET_LEN;
         imu.resetFIFO();
         return;
     }

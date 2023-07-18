@@ -3,7 +3,7 @@
  * Author             : WCH
  * Version            : V1.0
  * Date               : 2018/12/13
- * Description        : ÓÃ»§¿ØÖÆ·þÎñ
+ * Description        : ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½
  *********************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
  * Attention: This software (modified or not) and binary are used for 
@@ -79,38 +79,18 @@ static const uint8_t hidInfo[HID_INFORMATION_LEN] = {
 
 // HID Report Map characteristic value
 static const uint8_t hidReportMap[] = {
-    // Report map for PC
-//    0x05,0x0c,
-//    0x09,0x01,
-//    0xA1,0x01,
-//    0x85,0x01,
-//    0x15,0x00,
-//    0x26,0xff,0x1f,
-//    0x19,0x00,
-//    0x2A,0xff,0x1f,
-//    0x75,0x10,
-//    0x95,0x01,
-//    0x81,0x00,
-//    0xc0
+	0x06, 0x00, 0xFF, // USAGE_PAGE (Vendor)
+	0x09, 0x00, // USAGE (Undefined)
+	0xa1, 0x01, // COLLECTION (Application)
+	0x09, 0x00, // USAGE (Undefined)
+	0x15, 0x00, // LOGICAL_MINIMUM (0)
+	0x26, 0xFF, 0x00, // LOGICAL_MAXIMUM (255)
+	0x85, 0x01, //   REPORT_ID (1)
+	0x75, 0x08, // REPORT_SIZE (8)
+	0x95, 0x13, // REPORT_COUNT (19)
+	0x81, 0x02, // INPUT (Data,Var,Abs)
 
-    // Report map for Android
-    0x05, 0x0c, // USAGE_PAGE (Consumer Devices)
-    0x09, 0x01, // USAGE (Consumer Control)
-    0xa1, 0x01, // COLLECTION (Application)
-    0x85, 0x01, //   REPORT_ID (1)
-
-    0x15, 0x00, //   LOGICAL_MINIMUM (0)
-    0x25, 0x01, //   LOGICAL_MAXIMUM (1)
-    0x15, 0x00, //   LOGICAL_MINIMUM (0)
-    0x25, 0x01, //   LOGICAL_MAXIMUM (1)
-    0x75, 0x08, //   REPORT_SIZE (8)
-    0x95, 0x01, //   REPORT_COUNT (1)
-    0x09, 0xe9, //   USAGE (Volume Up)
-    0x81, 0x06, //   INPUT (Data,Var,Rel)
-    0x09, 0xea, //   USAGE (Volume Down)
-    0x81, 0x06, //   INPUT (Data,Var,Rel)
-
-    0xc0 // END_COLLECTION
+	0xc0 // END_COLLECTION
 };
 
 // HID report map length

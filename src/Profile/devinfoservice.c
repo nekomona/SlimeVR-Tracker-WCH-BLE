@@ -130,9 +130,9 @@ static const uint8_t devInfo11073Cert[] = {
 static uint8_t devInfoPnpIdProps = GATT_PROP_READ;
 static uint8_t devInfoPnpId[DEVINFO_PNP_ID_LEN] = {
     1,                                    // Vendor ID source (1=Bluetooth SIG)
-    LO_UINT16(0x07D7), HI_UINT16(0x07D7), // Vendor ID (WCH)
-    LO_UINT16(0x0000), HI_UINT16(0x0000), // Product ID (vendor-specific)
-    LO_UINT16(0x0110), HI_UINT16(0x0110)  // Product version (JJ.M.N)
+    LO_UINT16(0x2FE3), HI_UINT16(0x2FE3), // Vendor ID (WCH)
+    LO_UINT16(0x5652), HI_UINT16(0x5652), // Product ID (vendor-specific)
+    LO_UINT16(0x0103), HI_UINT16(0x0103)  // Product version (JJ.M.N)
 };
 
 /*********************************************************************

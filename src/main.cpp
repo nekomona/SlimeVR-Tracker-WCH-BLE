@@ -4,8 +4,11 @@
 #include "usbd_core.h"
 #include <SPIdev.h>
 
+
 /* code hardcoded for GPIO bank A at the moment */
 #define BLINKY_GPIO_PIN  GPIO_Pin_8
+
+/*
 
 extern "C" void cdc_acm_init(void);
 
@@ -55,3 +58,4 @@ int main(void)
     }
     return 0;
 }
+*/

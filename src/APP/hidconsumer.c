@@ -21,14 +21,36 @@
 #include "APP/hidconsumer.h"
 #include "Profile/hidconsumerservice.h"
 
-#include "vqftest.h"
-
 /*********************************************************************
  * MACROS
  */
 
 // HID consumer input report length
-#define HID_CONSUMER_IN_RPT_LEN              2
+#define HID_CONSUMER_IN_RPT_LEN              20
+
+#include "usbd_core.h"
+#include <SPIdev.h>
+#include "sensor/bmi160sensor.h"
+
+// Use 2B pack, transmit 19B with the first one dropped
+// HOGP will fill report ID into the first byte to form 20B packet
+#pragma pack(2)
+struct HidSensorReport {
+	uint8_t __type; // Replaced by BLE HOGP report ID
+	uint8_t sensorId;
+	uint8_t rssi;
+	uint8_t battPerc;
+	uint16_t battMV;
+    FusionReport rpt;
+	// uint16_t q[4]; // w, x, y, z
+	// uint16_t a[3]; // x, y, z
+};
+
+struct HidSensorReport rpt;
+
+BMI160Sensor sensor(0);
+
+
 
 /*********************************************************************
  * CONSTANTS
@@ -199,6 +221,7 @@ static hidDevCB_t hidEmuHidCBs = {
  *
  * @return  none
  */
+extern "C"
 void HidEmu_Init()
 {
     hidEmuTaskId = TMOS_ProcessEventRegister(HidEmu_ProcessEvent);
@@ -246,7 +269,13 @@ void HidEmu_Init()
     // Setup a delayed profile startup
     tmos_set_event(hidEmuTaskId, START_DEVICE_EVT);
 
-    vqftest_setup();
+    GPIOA_SetBits(GPIO_Pin_8);
+    GPIOA_ModeCfg(GPIO_Pin_8,
+        GPIO_ModeOut_PP_20mA
+    );
+
+    SPIdev::initialize();
+    sensor.motionSetup();
 }
 
 /*********************************************************************
@@ -262,6 +291,7 @@ void HidEmu_Init()
  *
  * @return  events not processed
  */
+extern "C"
 uint16_t HidEmu_ProcessEvent(uint8_t task_id, uint16_t events)
 {
     if(events & SYS_EVENT_MSG)
@@ -309,19 +339,16 @@ uint16_t HidEmu_ProcessEvent(uint8_t task_id, uint16_t events)
 
     if(events & START_REPORT_EVT)
     {
-        //Send volume down and release
-        //Report for PC
-//        hidEmuSendConsumerReport(0xea, 0);
-//        hidEmuSendConsumerReport(0, 0);
+        sensor.motionLoop();
+        sensor.fusion.getResult(&rpt.rpt);
+        
+        HidDev_Report(HID_RPT_ID_CONSUMER_IN, HID_REPORT_TYPE_INPUT,
+                  sizeof(rpt)-1, ((uint8_t *)(void *)&rpt) + 1);
 
-        //Report for Android
-        hidEmuSendConsumerReport(0, 1);
-        hidEmuSendConsumerReport(0, 0);
+        GPIOA_InverseBits(GPIO_Pin_8);
 
         tmos_start_task(hidEmuTaskId, START_REPORT_EVT, 1600);
         
-        vqftest_run();
-
         return (events ^ START_REPORT_EVT);
     }
     return 0;
