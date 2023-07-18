@@ -8,29 +8,29 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/include",
-                "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/src",
-                "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/Fusion",
-                "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/CH58xHAL",
-                "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/CH58xBLE",
+                "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src /home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src/APP /home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src/Profile",
+                "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src",
+                "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/HAL",
+                "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/CH58xBLE",
                 "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Core/ch58x",
                 "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Peripheral/ch58x/inc",
                 "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Peripheral/ch58x/src",
                 "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Startup",
+                "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/vqf",
                 ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/include",
-                    "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/src",
-                    "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/Fusion",
-                    "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/CH58xHAL",
-                    "/home/nekomana/Documents/PlatformIO/Projects/ch582f-spi/lib/CH58xBLE",
+                    "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src /home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src/APP /home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src/Profile",
+                    "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/src",
+                    "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/HAL",
+                    "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/CH58xBLE",
                     "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Core/ch58x",
                     "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Peripheral/ch58x/inc",
                     "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Peripheral/ch58x/src",
                     "/home/nekomana/.platformio/packages/framework-wch-noneos-sdk/Startup",
+                    "/home/nekomana/Documents/PlatformIO/Projects/230705-181912-blinky-none-os-ch5xx/lib/vqf",
                     ""
                 ]
             },
