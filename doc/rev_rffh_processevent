@@ -1,0 +1,78 @@
+0001c720 <RFFH_ProcessEvent>:
+   1c720:	             1141                	addi	sp,sp,-16
+   1c722:	             c422                	sw	s0,8(sp)
+   1c724:	             c606                	sw	ra,12(sp)
+   1c726:	             0015f793          	andi	a5,a1,1
+   1c72a:	             842e                	mv	s0,a1
+   1c72c:	   /-------- c3b9                	beqz	a5,1c772 <RFFH_ProcessEvent+0x52>
+   1c72e:	   |         1ffea797          	auipc	a5,0x1ffea
+   1c732:	   |         10a7c783          	lbu	a5,266(a5) # 20006838 <rfInfo+0xc>
+   1c736:	   |         0027f713          	andi	a4,a5,2
+   1c73a:	   |  /----- c715                	beqz	a4,1c766 <RFFH_ProcessEvent+0x46>
+   1c73c:	   |  |      07e2                	slli	a5,a5,0x18
+   1c73e:	   |  |      87e1                	srai	a5,a5,0x18
+   1c740:	   |  |      1ffea517          	auipc	a0,0x1ffea
+   1c744:	   |  |      0fc54503          	lbu	a0,252(a0) # 2000683c <rfInfo+0x10>
+   1c748:	   |  |      05000613          	li	a2,80
+   1c74c:	   |  |  /-- 0007da63          	bgez	a5,1c760 <RFFH_ProcessEvent+0x40>
+   1c750:	   |  |  |   1ffea617          	auipc	a2,0x1ffea
+   1c754:	   |  |  |   0d564603          	lbu	a2,213(a2) # 20006825 <rfConfig+0x19>
+   1c758:	   |  |  |   0a000793          	li	a5,160
+   1c75c:	   |  |  |   02f60633          	mul	a2,a2,a5
+   1c760:	   |  |  \-> 4591                	li	a1,4
+   1c762:	   |  |      893e90ef          	jal	ra,5ff4 <tmos_start_task>
+   1c766:	   |  \----> 00144513          	xori	a0,s0,1
+   1c76a:	/--|-------> 40b2                	lw	ra,12(sp)
+   1c76c:	|  |         4422                	lw	s0,8(sp)
+   1c76e:	|  |         0141                	addi	sp,sp,16
+   1c770:	|  |         8082                	ret
+   1c772:	|  \-------> 0025f793          	andi	a5,a1,2
+   1c776:	|  /-------- c3b1                	beqz	a5,1c7ba <RFFH_ProcessEvent+0x9a>
+   1c778:	|  |         1ffea797          	auipc	a5,0x1ffea
+   1c77c:	|  |         0c07c783          	lbu	a5,192(a5) # 20006838 <rfInfo+0xc>
+   1c780:	|  |         0047f713          	andi	a4,a5,4
+   1c784:	|  |  /----- cb05                	beqz	a4,1c7b4 <RFFH_ProcessEvent+0x94>
+   1c786:	|  |  |      07e2                	slli	a5,a5,0x18
+   1c788:	|  |  |      87e1                	srai	a5,a5,0x18
+   1c78a:	|  |  |      1ffea517          	auipc	a0,0x1ffea
+   1c78e:	|  |  |      0b254503          	lbu	a0,178(a0) # 2000683c <rfInfo+0x10>
+   1c792:	|  |  |      0a000613          	li	a2,160
+   1c796:	|  |  |  /-- 0007dc63          	bgez	a5,1c7ae <RFFH_ProcessEvent+0x8e>
+   1c79a:	|  |  |  |   1ffea617          	auipc	a2,0x1ffea
+   1c79e:	|  |  |  |   08b64603          	lbu	a2,139(a2) # 20006825 <rfConfig+0x19>
+   1c7a2:	|  |  |  |   0a000793          	li	a5,160
+   1c7a6:	|  |  |  |   02f60633          	mul	a2,a2,a5
+   1c7aa:	|  |  |  |   02860613          	addi	a2,a2,40
+   1c7ae:	|  |  |  \-> 45a1                	li	a1,8
+   1c7b0:	|  |  |      845e90ef          	jal	ra,5ff4 <tmos_start_task>
+   1c7b4:	|  |  \----> 00244513          	xori	a0,s0,2
+   1c7b8:	+--|-------- bf4d                	j	1c76a <RFFH_ProcessEvent+0x4a>
+   1c7ba:	|  \-------> 0045f793          	andi	a5,a1,4
+   1c7be:	|        /-- c791                	beqz	a5,1c7ca <RFFH_ProcessEvent+0xaa>
+   1c7c0:	|        |   e11ff0ef          	jal	ra,1c5d0 <rf_hop_heart_beat>
+   1c7c4:	|        |   00444513          	xori	a0,s0,4
+   1c7c8:	+--------|-- b74d                	j	1c76a <RFFH_ProcessEvent+0x4a>
+   1c7ca:	|        \-> 0085f793          	andi	a5,a1,8
+   1c7ce:	|     /----- cf81                	beqz	a5,1c7e6 <RFFH_ProcessEvent+0xc6>
+   1c7d0:	|     |      1ffea797          	auipc	a5,0x1ffea
+   1c7d4:	|     |      0687c783          	lbu	a5,104(a5) # 20006838 <rfInfo+0xc>
+   1c7d8:	|     |      8b91                	andi	a5,a5,4
+   1c7da:	|     |  /-- c399                	beqz	a5,1c7e0 <RFFH_ProcessEvent+0xc0>
+   1c7dc:	|     |  |   d6fff0ef          	jal	ra,1c54a <RF_FrequencyHoppingShut>
+   1c7e0:	|     |  \-> 00844513          	xori	a0,s0,8
+   1c7e4:	+-----|----- b759                	j	1c76a <RFFH_ProcessEvent+0x4a>
+   1c7e6:	|     \----> 0105f793          	andi	a5,a1,16
+   1c7ea:	|            4501                	li	a0,0
+   1c7ec:	+----------- dfbd                	beqz	a5,1c76a <RFFH_ProcessEvent+0x4a>
+   1c7ee:	|            f4de90ef          	jal	ra,673a <TMOS_TempSample>
+   1c7f2:	|            1ffea717          	auipc	a4,0x1ffea
+   1c7f6:	|            00574703          	lbu	a4,5(a4) # 200067f7 <gBleIPPara+0x7>
+   1c7fa:	|            47a1                	li	a5,8
+   1c7fc:	|        /-- 00f71b63          	bne	a4,a5,1c812 <RFFH_ProcessEvent+0xf2>
+   1c800:	|        |   64000613          	li	a2,1600
+   1c804:	|        |   45c1                	li	a1,16
+   1c806:	|        |   1ffea517          	auipc	a0,0x1ffea
+   1c80a:	|        |   03654503          	lbu	a0,54(a0) # 2000683c <rfInfo+0x10>
+   1c80e:	|        |   fe6e90ef          	jal	ra,5ff4 <tmos_start_task>
+   1c812:	|        \-> 01044513          	xori	a0,s0,16
+   1c816:	\----------- bf91                	j	1c76a <RFFH_ProcessEvent+0x4a>

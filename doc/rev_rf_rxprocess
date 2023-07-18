@@ -13,6 +13,7 @@
    1bf5e:	                                                                1ffeb417          	auipc	s0,0x1ffeb
    1bf62:	                                                                89240413          	addi	s0,s0,-1902 # 200067f0 <gBleIPPara>
    1bf66:	   /----------------------------------------------------------- 30078063          	beqz	a5,1c266 <rfRxProcess+0x324>
+                                                                  // if (rfConfig.LLEMode & 0x01) // branch if in basic mode
    1bf6a:	   |                                                            00044783          	lbu	a5,0(s0)
    1bf6e:	   |                                                            8b85                	andi	a5,a5,1
    1bf70:	   |  /-------------------------------------------------------- 2c078463          	beqz	a5,1c238 <rfRxProcess+0x2f6>
@@ -260,27 +261,36 @@
    1c25e:	|  |     |  /--|--|-------------------------------------------> 08100513          	li	a0,129
    1c262:	|  |     |  |  |  |                                             9782                	jalr	a5
    1c264:	+--|-----|--|--|--|-------------------------------------------- bf39                	j	1c182 <rfRxProcess+0x240>
+                                                                     // basic mode starts here
    1c266:	|  \-----|--|--|--|-------------------------------------------> 00144783          	lbu	a5,1(s0)
    1c26a:	|        |  |  |  |                                             8b85                	andi	a5,a5,1
    1c26c:	|        |  |  |  |  /----------------------------------------- 22078263          	beqz	a5,1c490 <rfRxProcess+0x54e>
+                                                                     // if (gBleIPPara[0x1] & 0x1) // branch if from TX (error)
    1c270:	|        |  |  |  |  |                                          1ffea797          	auipc	a5,0x1ffea
    1c274:	|        |  |  |  |  |                                          580780a3          	sb	zero,1409(a5) # 200067f1 <gBleIPPara+0x1>
+                                                                     // gBleIPPara[0x1] = 0;
    1c278:	|        |  |  |  |  |                                          000107a3          	sb	zero,15(sp)
    1c27c:	|        |  |  |  |  |                                          01842903          	lw	s2,24(s0)
    1c280:	|        |  |  |  |  |                                          d36ff0ef          	jal	ra,1b7b6 <rf_stop>
+                                                                     // rf_stop()
    1c284:	|        |  |  |  |  |                                          1ffea697          	auipc	a3,0x1ffea
    1c288:	|        |  |  |  |  |                                          5b46c683          	lbu	a3,1460(a3) # 20006838 <rfInfo+0xc>
    1c28c:	|        |  |  |  |  |                                          0046f793          	andi	a5,a3,4
    1c290:	|        |  |  |  |  |  /-------------------------------------- 1a078463          	beqz	a5,1c438 <rfRxProcess+0x4f6>
+                                                                     // if (rfInfo.fhstuff == 0) branch
    1c294:	|        |  |  |  |  |  |                                       00194783          	lbu	a5,1(s2)
+                                                                     // a5 = gBleIPPara.bleMemAddr[0x1]
    1c298:	|        |  |  |  |  |  |                                       97ca                	add	a5,a5,s2
    1c29a:	|        |  |  |  |  |  |                                       0007c703          	lbu	a4,0(a5)
    1c29e:	|        |  |  |  |  |  |                                       08000793          	li	a5,128
    1c2a2:	|        |  |  |  |  |  |                                   /-- 00f71a63          	bne	a4,a5,1c2b6 <rfRxProcess+0x374>
+                                                                     // if (gBleIPPara.bleMemAddr[a5] == 0x80) {
    1c2a6:	|        |  |  |  |  |  |                                   |   0004c783          	lbu	a5,0(s1)
    1c2aa:	|        |  |  |  |  |  |                                   |   0087e793          	ori	a5,a5,8
    1c2ae:	|        |  |  |  |  |  |                                   |   1ffea717          	auipc	a4,0x1ffea
    1c2b2:	|        |  |  |  |  |  |                                   |   54f70f23          	sb	a5,1374(a4) # 2000680c <rfConfig>
+                                                                     //     rfConfig.LLEMode |= 0x8; // rsvd bit 3
+                                                                     // }
    1c2b6:	|        |  |  |  |  |  |                                   \-> 1ffea717          	auipc	a4,0x1ffea
    1c2ba:	|        |  |  |  |  |  |                                       33e70713          	addi	a4,a4,830 # 200065f4 <ble>
    1c2be:	|        |  |  |  |  |  |                                       01670603          	lb	a2,22(a4)
@@ -401,18 +411,23 @@
    1c42e:	|        |  |        |  |                       \-------------> 00194783          	lbu	a5,1(s2)
    1c432:	|        |  |        |  |                                       17f9                	addi	a5,a5,-2
    1c434:	|        |  |        |  |                                       00f900a3          	sb	a5,1(s2)
+                                                            // Non-fh possibly here
    1c438:	|        |  |        |  \-------------------------------------> 4c08                	lw	a0,24(s0)
+                                                            // a0 = gBleIpPara.bleMemAddr
    1c43a:	|        |  |        |                                          4681                	li	a3,0
    1c43c:	|        |  |        |                                          4581                	li	a1,0
    1c43e:	|        |  |        |                                          00f10613          	addi	a2,sp,15
    1c442:	|        |  |        |                                          1ffe5097          	auipc	ra,0x1ffe5
    1c446:	|        |  |        |                                          a88080e7          	jalr	-1400(ra) # 20000eca <ble_ll_chkcrc>
+                                                            // ble_ll_chkcrc(gBleIpPara.bleMemAddr, 0, sp+15, 0)
    1c44a:	|        |  |        |                                          4c1c                	lw	a5,24(s0)
    1c44c:	|        |  |        |                                          01851593          	slli	a1,a0,0x18
    1c450:	|        |  |        |                                          0ff00693          	li	a3,255
    1c454:	|        |  |        |                                          0007c703          	lbu	a4,0(a5)
    1c458:	|        |  |        |                                          85e1                	srai	a1,a1,0x18
+                                                            // a1 = crcret & 0xFF;
    1c45a:	|        |  |        |                                      /-- 00d70c63          	beq	a4,a3,1c472 <rfRxProcess+0x530>
+                                                            // if (gBleIpPara.bleMemAddr[0] == 0xff) skip type check;
    1c45e:	|        |  |        |                                      |   1ffea797          	auipc	a5,0x1ffea
    1c462:	|        |  |        |                                      |   3d17c783          	lbu	a5,977(a5) # 2000682f <rfInfo+0x3>
    1c466:	|        |  |        |                                      +-- 00d78663          	beq	a5,a3,1c472 <rfRxProcess+0x530>
@@ -423,11 +438,16 @@
    1c47a:	|        |  |        |                                      +-- e589                	bnez	a1,1c484 <rfRxProcess+0x542>
    1c47c:	|        |  |        |                                      |   00f14783          	lbu	a5,15(sp)
    1c480:	|        |  |        |                                      |   00f90023          	sb	a5,0(s2)
+                                                            // if ( ((rfConfig.LLEMode & 0x80) == 0) && crcret == 0) 
+                                                            //     gBleIpPara.bleMemAddr[0] = sp[15]; //RSSI from ble_ll_checkcrc
    1c484:	|        |  |        |                                      \-> 489c                	lw	a5,16(s1)
    1c486:	|        |  |        |                                          4c10                	lw	a2,24(s0)
    1c488:	|        |  |        |                                          0ff5f593          	andi	a1,a1,255
    1c48c:	|        |  |        |                                          450d                	li	a0,3
    1c48e:	|        \--|--------|----------------------------------------- bb51                	j	1c222 <rfRxProcess+0x2e0>
+                                                            // rfConfig.rfStatusCB(3, a1, gBleIpPara.bleMemAddr);
+                                                            // return;
+                                                                     // basic + TX starts from here (?)
    1c490:	|           |        \----------------------------------------> ceffe0ef          	jal	ra,1b17e <ll_multi_states_check>
    1c494:	|           |                                                   9ac18793          	addi	a5,gp,-1620 # 20004c74 <gptrBBReg>
    1c498:	|           |                                                   4398                	lw	a4,0(a5)
@@ -439,6 +459,7 @@
    1c4a8:	|           |                                                   1ffea797          	auipc	a5,0x1ffea
    1c4ac:	|           |                                                   14c78793          	addi	a5,a5,332 # 200065f4 <ble>
    1c4b0:	|           |                                                   5b9c                	lw	a5,48(a5)
+                                                                     // call ble.staCB(0x81, 0x01(FAILURE));
    1c4b2:	\-----------|-------------------------------------------------- cc0788e3          	beqz	a5,1c182 <rfRxProcess+0x240>
    1c4b6:	            |                                                   4585                	li	a1,1
    1c4b8:	            \-------------------------------------------------- b35d                	j	1c25e <rfRxProcess+0x31c>

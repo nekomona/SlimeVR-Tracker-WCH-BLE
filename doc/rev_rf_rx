@@ -30,26 +30,31 @@
    1bd8a:	|           |         c256                	sw	s5,4(sp)
    1bd8c:	|           |         c05a                	sw	s6,0(sp)
    1bd8e:	|           +-------- d7f9                	beqz	a5,1bd5c <RF_Rx+0x12>
-                                                // if (rfConfig[8] == 0) return 1;
+                                                // if (rfConfig.accessAddress == 0) return 1;
    1bd90:	|           |         9b818913          	addi	s2,gp,-1608 # 20004c80 <gptrLLEReg>
    1bd94:	|           |         00092783          	lw	a5,0(s2)
    1bd98:	|           |         4398                	lw	a4,0(a5)
    1bd9a:	|           |         8b0d                	andi	a4,a4,3
    1bd9c:	|           |     /-- c305                	beqz	a4,1bdbc <RF_Rx+0x72>
+                                                // if (LLE[0] & 0x3) {
    1bd9e:	|           |     |   4bb8                	lw	a4,80(a5)
    1bda0:	|           |     |   9b61                	andi	a4,a4,-8
    1bda2:	|           |     |   cbb8                	sw	a4,80(a5)
+                                                //     LLE[80] &= 0x7;
    1bda4:	|           |     |   4398                	lw	a4,0(a5)
    1bda6:	|           |     |   00876713          	ori	a4,a4,8
    1bdaa:	|           |     |   c398                	sw	a4,0(a5)
+                                                //     LLE[0] |= 0x8;
    1bdac:	|           |     |   439c                	lw	a5,0(a5)
    1bdae:	|           |     |   838d                	srli	a5,a5,0x3
    1bdb0:	|           |     |   8b85                	andi	a5,a5,1
    1bdb2:	|           |     +-- c789                	beqz	a5,1bdbc <RF_Rx+0x72>
+                                                //     if (LLE[0] & 0x8) 4c delay;
    1bdb4:	|           |     |   0001                	nop
    1bdb6:	|           |     |   0001                	nop
    1bdb8:	|           |     |   0001                	nop
    1bdba:	|           |     |   0001                	nop
+                                                // }
    1bdbc:	|           |     \-> 1ffeb417          	auipc	s0,0x1ffeb
    1bdc0:	|           |         a7040413          	addi	s0,s0,-1424 # 2000682c <rfInfo>
    1bdc4:	|           |         00c44783          	lbu	a5,12(s0)
@@ -154,11 +159,14 @@
    1bece:	|  |  |  |  |         72a78793          	addi	a5,a5,1834 # 200065f4 <ble>
    1bed2:	|  |  |  |  |         579c                	lw	a5,40(a5)
    1bed4:	|  |  |  |  |     /-- cb91                	beqz	a5,1bee8 <RF_Rx+0x19e>
+                                                    // if (ble.tsCB) {
    1bed6:	|  |  |  |  |     |   64000613          	li	a2,1600
    1beda:	|  |  |  |  |     |   45c1                	li	a1,16
    1bedc:	|  |  |  |  |     |   1ffeb517          	auipc	a0,0x1ffeb
    1bee0:	|  |  |  |  |     |   96054503          	lbu	a0,-1696(a0) # 2000683c <rfInfo+0x10>
    1bee4:	|  |  |  |  |     |   910ea0ef          	jal	ra,5ff4 <tmos_start_task>
+                                                    //     tmos_start_task(rfInfo.rffh_event_taskid, 16, 1600);
+                                                    // }
    1bee8:	|  |  |  |  |     \-> 1ffeb797          	auipc	a5,0x1ffeb
    1beec:	|  |  |  |  |         900786a3          	sb	zero,-1779(a5) # 200067f5 <gBleIPPara+0x5>
    1bef0:	|  |  |  |  |         00092683          	lw	a3,0(s2)

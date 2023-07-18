@@ -1,0 +1,80 @@
+uint8_t ble_ll_chkcrc(byte* rxpacket, int packet_tail_check_flag, byte* rssiOut, short* halfout);
+
+20000eca <ble_ll_chkcrc>:
+20000eca:	          9ac18813          	addi	a6,gp,-1620 # 20004c74 <gptrBBReg>
+20000ece:	          00082703          	lw	a4,0(a6)
+20000ed2:	          5f1c                	lw	a5,56(a4)
+                                        // a5 = BB[56]
+20000ed4:	          8395                	srli	a5,a5,0x5
+20000ed6:	          8b85                	andi	a5,a5,1
+20000ed8:	/-------- e7d1                	bnez	a5,20000f64 <ble_ll_chkcrc+0x9a>
+                                        // if (BB[56] & 0x20) return 1;
+20000eda:	|     /-- c609                	beqz	a2,20000ee4 <ble_ll_chkcrc+0x1a>
+                                        // if (a2 != 0) {
+20000edc:	|     |   5b1c                	lw	a5,48(a4)
+20000ede:	|     |   83bd                	srli	a5,a5,0xf
+20000ee0:	|     |   00f60023          	sb	a5,0(a2)
+                                        //     *(byte*)a2 = BB[48] >> 15;
+                                        //     // Its RSSI !
+                                        // }
+20000ee4:	|  /--\-X ca85                	beqz	a3,20000f14 <ble_ll_chkcrc+0x4a>
+                                        // if (a3 != 0) {
+20000ee6:	|  |      00082783          	lw	a5,0(a6)
+20000eea:	|  |      5b98                	lw	a4,48(a5)
+20000eec:	|  |      0746                	slli	a4,a4,0x11
+20000eee:	|  |      01675793          	srli	a5,a4,0x16
+                                        //     a5 = (BB[48] << 17) >> 24;
+                                        //     a5 = (BB[48] >> 7) & 0xFF
+20000ef2:	|  |  /-- 00075663          	bgez	a4,20000efe <ble_ll_chkcrc+0x34>
+20000ef6:	|  |  |   c007e793          	ori	a5,a5,-1024
+20000efa:	|  |  |   07c2                	slli	a5,a5,0x10
+20000efc:	|  |  |   83c1                	srli	a5,a5,0x10
+                                        //     if (BB[48] & 0x40) a5 |= 0xFC00;
+20000efe:	|  |  \-> 00069703          	lh	a4,0(a3)
+20000f02:	|  |      07c2                	slli	a5,a5,0x10
+20000f04:	|  |      87c1                	srai	a5,a5,0x10
+20000f06:	|  |  /-- c709                	beqz	a4,20000f10 <ble_ll_chkcrc+0x46>
+20000f08:	|  |  |   97ba                	add	a5,a5,a4
+20000f0a:	|  |  |   4709                	li	a4,2
+20000f0c:	|  |  |   02e7c7b3          	div	a5,a5,a4
+                                        //     if (*(short*)a3 != 0) {a5 = (*(short*)a3 + a5) / 2;)
+20000f10:	|  |  \-> 00f69023          	sh	a5,0(a3)
+                                        //     *a3 = a5;
+                                        // }
+20000f14:	|  \--/-X cd85                	beqz	a1,20000f4c <ble_ll_chkcrc+0x82>
+20000f16:	|     |   00154783          	lbu	a5,1(a0)
+20000f1a:	|     +-- cb8d                	beqz	a5,20000f4c <ble_ll_chkcrc+0x82>
+                                        // if (a1 == 0 || pkt[1] == 0) skip check;
+20000f1c:	|     |   00006697          	auipc	a3,0x6
+20000f20:	|     |   8da6c683          	lbu	a3,-1830(a3) # 200067f6 <gBleIPPara+0x6>
+20000f24:	|     |   0406f693          	andi	a3,a3,64
+20000f28:	|     |   00978713          	addi	a4,a5,9
+20000f2c:	|     |   4789                	li	a5,2
+20000f2e:	|  /--|-- ca8d                	beqz	a3,20000f60 <ble_ll_chkcrc+0x96>
+                                        // if ( (gBleIPPara[0x6] & 0x40) == 0 ) return 2;
+20000f30:	|  |  |   953a                	add	a0,a0,a4
+20000f32:	|  |  |   00054703          	lbu	a4,0(a0)
+                                        // a4 = pkt[pktlen+9]
+20000f36:	|  |  |   4685                	li	a3,1
+20000f38:	|  |  |   4799                	li	a5,6
+20000f3a:	|  |  |   06f77613          	andi	a2,a4,111
+20000f3e:	|  +--|-- 02d61163          	bne	a2,a3,20000f60 <ble_ll_chkcrc+0x96>
+                                        // if ( (a4 & 0x6F) != 0x01 ) return 6;
+20000f42:	|  |  |   0762                	slli	a4,a4,0x18
+20000f44:	|  |  |   8761                	srai	a4,a4,0x18
+20000f46:	|  |  |   47b9                	li	a5,14
+20000f48:	|  +--|-- 00074c63          	bltz	a4,20000f60 <ble_ll_chkcrc+0x96>
+                                        // if (a4 & 0x80) return 14;
+20000f4c:	|  |  \-> 00082783          	lw	a5,0(a6)
+20000f50:	|  |      5f9c                	lw	a5,56(a5)
+20000f52:	|  |      83ed                	srli	a5,a5,0x1b
+20000f54:	|  |      8b8d                	andi	a5,a5,3
+20000f56:	|  |      00006717          	auipc	a4,0x6
+20000f5a:	|  |      8af702a3          	sb	a5,-1883(a4) # 200067fb <gBleIPPara+0xb>
+                                        // gBleIPPara[0xB] = (BB[56] >> 27) & 0x3;
+                                        // return 0;
+20000f5e:	|  |      4781                	li	a5,0
+20000f60:	|  >----> 853e                	mv	a0,a5
+20000f62:	|  |      8082                	ret
+20000f64:	\--|----> 4785                	li	a5,1
+20000f66:	   \----- bfed                	j	20000f60 <ble_ll_chkcrc+0x96>

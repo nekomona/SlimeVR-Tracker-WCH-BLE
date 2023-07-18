@@ -1,0 +1,55 @@
+00028dda <memcpy>:
+   28dda:	             00a5c7b3          	xor	a5,a1,a0
+   28dde:	             8b8d                	andi	a5,a5,3
+   28de0:	             00c50733          	add	a4,a0,a2
+   28de4:	         /-- e781                	bnez	a5,28dec <memcpy+0x12>
+   28de6:	         |   478d                	li	a5,3
+   28de8:	      /--|-- 00c7ee63          	bltu	a5,a2,28e04 <memcpy+0x2a>
+   28dec:	      |  \-> 87aa                	mv	a5,a0
+   28dee:	/-----|----- 0ae57063          	bgeu	a0,a4,28e8e <memcpy+0xb4>
+   28df2:	|  /--|----> 0005c683          	lbu	a3,0(a1)
+   28df6:	|  |  |      0785                	addi	a5,a5,1
+   28df8:	|  |  |      0585                	addi	a1,a1,1
+   28dfa:	|  |  |      fed78fa3          	sb	a3,-1(a5)
+   28dfe:	|  +--|----- fee7eae3          	bltu	a5,a4,28df2 <memcpy+0x18>
+   28e02:	|  |  |      8082                	ret
+   28e04:	|  |  \----> 00357693          	andi	a3,a0,3
+   28e08:	|  |         87aa                	mv	a5,a0
+   28e0a:	|  |  /--/-X ca91                	beqz	a3,28e1e <memcpy+0x44>
+   28e0c:	|  |  |  |   0005c683          	lbu	a3,0(a1)
+   28e10:	|  |  |  |   0785                	addi	a5,a5,1
+   28e12:	|  |  |  |   0585                	addi	a1,a1,1
+   28e14:	|  |  |  |   fed78fa3          	sb	a3,-1(a5)
+   28e18:	|  |  |  |   0037f693          	andi	a3,a5,3
+   28e1c:	|  |  |  \-- b7fd                	j	28e0a <memcpy+0x30>
+   28e1e:	|  |  \----> ffc77693          	andi	a3,a4,-4
+   28e22:	|  |         fe068613          	addi	a2,a3,-32
+   28e26:	|  |  /--/-X 06c7f063          	bgeu	a5,a2,28e86 <memcpy+0xac>
+   28e2a:	|  |  |  |   0005a383          	lw	t2,0(a1)
+   28e2e:	|  |  |  |   0045a283          	lw	t0,4(a1)
+   28e32:	|  |  |  |   0085af83          	lw	t6,8(a1)
+   28e36:	|  |  |  |   00c5af03          	lw	t5,12(a1)
+   28e3a:	|  |  |  |   0105ae83          	lw	t4,16(a1)
+   28e3e:	|  |  |  |   0145ae03          	lw	t3,20(a1)
+   28e42:	|  |  |  |   0185a303          	lw	t1,24(a1)
+   28e46:	|  |  |  |   01c5a883          	lw	a7,28(a1)
+   28e4a:	|  |  |  |   02458593          	addi	a1,a1,36
+   28e4e:	|  |  |  |   0077a023          	sw	t2,0(a5)
+   28e52:	|  |  |  |   ffc5a803          	lw	a6,-4(a1)
+   28e56:	|  |  |  |   0057a223          	sw	t0,4(a5)
+   28e5a:	|  |  |  |   01f7a423          	sw	t6,8(a5)
+   28e5e:	|  |  |  |   01e7a623          	sw	t5,12(a5)
+   28e62:	|  |  |  |   01d7a823          	sw	t4,16(a5)
+   28e66:	|  |  |  |   01c7aa23          	sw	t3,20(a5)
+   28e6a:	|  |  |  |   0067ac23          	sw	t1,24(a5)
+   28e6e:	|  |  |  |   0117ae23          	sw	a7,28(a5)
+   28e72:	|  |  |  |   02478793          	addi	a5,a5,36
+   28e76:	|  |  |  |   ff07ae23          	sw	a6,-4(a5)
+   28e7a:	|  |  |  \-- b775                	j	28e26 <memcpy+0x4c>
+   28e7c:	|  |  |  /-> 4190                	lw	a2,0(a1)
+   28e7e:	|  |  |  |   0791                	addi	a5,a5,4
+   28e80:	|  |  |  |   0591                	addi	a1,a1,4
+   28e82:	|  |  |  |   fec7ae23          	sw	a2,-4(a5)
+   28e86:	|  |  \--\-X fed7ebe3          	bltu	a5,a3,28e7c <memcpy+0xa2>
+   28e8a:	|  \-------- f6e7e4e3          	bltu	a5,a4,28df2 <memcpy+0x18>
+   28e8e:	\----------> 8082                	ret

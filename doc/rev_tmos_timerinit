@@ -1,0 +1,98 @@
+bStatus_t TMOS_TimerInit( pfnGetSysClock fnGetClock );
+
+0000679c <TMOS_TimerInit>:
+    679c:	          20000797          	auipc	a5,0x20000
+    67a0:	          e5878793          	addi	a5,a5,-424 # 200065f4 <ble>
+    67a4:	          57dc                	lw	a5,44(a5)
+    67a6:	          1101                	addi	sp,sp,-32
+    67a8:	          ce06                	sw	ra,28(sp)
+    67aa:	      /-- c781                	beqz	a5,67b2 <TMOS_TimerInit+0x16>
+    67ac:	      |   c62a                	sw	a0,12(sp)
+    67ae:	      |   9782                	jalr	a5s
+    67b0:	      |   4532                	lw	a0,12(sp)
+                                    // if (ble.rcCB) ble.rcCB(); // calibrath LSI
+    67b2:	   /--\-X c50d                	beqz	a0,67dc <TMOS_TimerInit+0x40>
+                                    // if (fnGetClock) {
+    67b4:	   |      003287b7          	lui	a5,0x328
+    67b8:	   |      a1278793          	addi	a5,a5,-1518 # 327a12 <__fsymtab_end+0x2fe4e2>
+    67bc:	   |      20000717          	auipc	a4,0x20000
+    67c0:	   |      e8f72e23          	sw	a5,-356(a4) # 20006658 <gTmosPara+0x28>
+                                    //     gTmosPara[0x28] = 0x327A12;
+    67c4:	   |      8ea1a023          	sw	a0,-1824(gp) # 20004ba8 <fnGetClockCBs>
+                                    //     fnGetClockCBs = fnGetClock;
+    67c8:	/--|----> 00000517          	auipc	a0,0x0
+    67cc:	|  |      e1850513          	addi	a0,a0,-488 # 65e0 <clockGetTickValve>
+    67d0:	|  |      b29ff0ef          	jal	ra,62f8 <TMOS_TimerRegister>
+                                    //     TMOS_TimerRegister(clockGetTickValve);
+    67d4:	|  |      40f2                	lw	ra,28(sp)
+    67d6:	|  |      4501                	li	a0,0
+    67d8:	|  |      6105                	addi	sp,sp,32
+    67da:	|  |      8082                	ret
+                                    //     return 0;
+                                    // }
+    67dc:	|  \----> 20000797          	auipc	a5,0x20000
+    67e0:	|         e2e7c783          	lbu	a5,-466(a5) # 2000660a <ble+0x16>
+                                    // SelRTCClock = ble.SelRTCClock;
+    67e4:	|         01879713          	slli	a4,a5,0x18
+    67e8:	|         8761                	srai	a4,a4,0x18
+    67ea:	|     /-- 02075a63          	bgez	a4,681e <TMOS_TimerInit+0x82>
+                                    // if (SelRTCClock & 0x80) {
+                                    //     // Bit 7 set, use HSE
+    67ee:	|     |   20000797          	auipc	a5,0x20000
+    67f2:	|     |   e407af23          	sw	zero,-418(a5) # 2000664c <gTmosPara+0x1c>
+                                    //     gTmosPara[0x1C] = 0;
+    67f6:	|     |   003287b7          	lui	a5,0x328
+    67fa:	|     |   a1278793          	addi	a5,a5,-1518 # 327a12 <__fsymtab_end+0x2fe4e2>
+    67fe:	|     |   20000717          	auipc	a4,0x20000
+    6802:	|     |   e4f72d23          	sw	a5,-422(a4) # 20006658 <gTmosPara+0x28>
+                                    //     gTmosPara[0x28] = 0x327a12;
+    6806:	|     |   577d                	li	a4,-1
+    6808:	|     |   4000c7b7          	lui	a5,0x4000c
+    680c:	|     |   26e7a423          	sw	a4,616(a5) # 4000c268 <__freertos_irq_stack_top+0x20004268>
+                                    //     someRFREG[0x68] = -1;
+    6810:	|     |   1fffa797          	auipc	a5,0x1fffa
+    6814:	|     |   ce878793          	addi	a5,a5,-792 # 200004f8 <clockGetHSEValue>
+                                    //     fnGetClockCBs = clockGetHSEValue;
+    6818:	|  /--|-> 8ef1a023          	sw	a5,-1824(gp) # 20004ba8 <fnGetClockCBs>
+    681c:	\--|--|-- b775                	j	67c8 <TMOS_TimerInit+0x2c>
+                                    //     TMOS_TimerRegister(clockGetTickValve);
+                                    //     return 0;
+                                    // }
+    681e:	   |  \-> 0017f713          	andi	a4,a5,1
+    6822:	   |  /-- cf11                	beqz	a4,683e <TMOS_TimerInit+0xa2>
+                                    // if (SelRTCClock & 0x01) {
+                                    //     // Use LSI 32000Hz
+    6824:	   |  |   032087b7          	lui	a5,0x3208
+    6828:	   |  |   d0078793          	addi	a5,a5,-768 # 3207d00 <__fsymtab_end+0x31de7d0>
+    682c:	   |  |   20000717          	auipc	a4,0x20000
+    6830:	   |  |   e2f72623          	sw	a5,-468(a4) # 20006658 <gTmosPara+0x28>
+                                    //     gTmosPara[0x28] = 0x3207d00;
+    6834:	/--|--|-> 1fffa797          	auipc	a5,0x1fffa
+    6838:	|  |  |   cf678793          	addi	a5,a5,-778 # 2000052a <clockGetLSEValue>
+    683c:	|  \--|-- bff1                	j	6818 <TMOS_TimerInit+0x7c>
+                                    //     fnGetClockCBs = clockGetLSEValue;
+                                    //     TMOS_TimerRegister(clockGetTickValve);
+                                    //     return 0;
+                                    // }
+    683e:	|     \-> 7761                	lui	a4,0xffff8
+    6840:	|         20000697          	auipc	a3,0x20000
+    6844:	|         e0e69c23          	sh	a4,-488(a3) # 20006658 <gTmosPara+0x28>
+                                    // else {
+                                    //     if (SelRTCClock) {
+                                    //         // LSI 32768Hz
+                                    //         gTmosPara[0x28] = 0x3208000
+                                    //     } else {
+                                    //         // LSE 32768Hz
+                                    //         gTmosPara[0x28] = 0x328000
+                                    //     }
+                                    //     fnGetClockCBs = clockGetLSEValue;
+                                    //     TMOS_TimerRegister(clockGetTickValve);
+                                    //     return 0;
+                                    // }
+    6848:	|  /----- cb81                	beqz	a5,6858 <TMOS_TimerInit+0xbc>
+    684a:	|  |      32000793          	li	a5,800
+    684e:	|  |  /-> 20000717          	auipc	a4,0x20000
+    6852:	|  |  |   e0f71623          	sh	a5,-500(a4) # 2000665a <gTmosPara+0x2a>
+    6856:	\--|--|-- bff9                	j	6834 <TMOS_TimerInit+0x98>
+    6858:	   \--|-> 03200793          	li	a5,50
+    685c:	      \-- bfcd                	j	684e <TMOS_TimerInit+0xb2>
