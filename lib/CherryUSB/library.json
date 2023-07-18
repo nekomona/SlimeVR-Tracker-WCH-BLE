@@ -1,0 +1,23 @@
+{
+    "name": "CherryUSB",
+    "authors": {
+        "name": "CherryEmbedded"
+    },
+    "version": "1.0.0",
+    "platforms": [
+        "ch32v"
+    ],
+    "frameworks": "*",
+    "build": {
+        "flags": [
+            "-I ./core",
+            "-I ./common",
+            "-I ./demo",
+            "-I ./class/cdc",
+            "-I ./class/hid",
+            "-I ./port/ch32",
+            "-Wformat=0",
+            "-Wno-incompatible-pointer-types"
+        ]
+    }
+}
