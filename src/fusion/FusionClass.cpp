@@ -23,8 +23,8 @@ void FusionClass::setup() {
 
 void FusionClass::update() {
     // Update gyroscope AHRS algorithm
-    // FusionAhrsUpdateNoMagnetometer(&ahrs, FusionOffsetUpdate(&offset, gyro), accel, (1.0f / 200.0f) );
-    FusionAhrsUpdate(&ahrs, FusionOffsetUpdate(&offset, gyro), accel, mag, (1.0f / 200.0f) );
+    FusionAhrsUpdateNoMagnetometer(&ahrs, FusionOffsetUpdate(&offset, gyro), accel, (1.0f / 200.0f) );
+    // FusionAhrsUpdate(&ahrs, FusionOffsetUpdate(&offset, gyro), accel, mag, (1.0f / 200.0f) );
 }
 
 #define INT16_TO_UINT16(x) ((uint16_t)32768 + (uint16_t)(x))
@@ -39,7 +39,7 @@ void FusionClass::getResult(FusionReport *obuf) {
 	obuf->q[0] = INT16_TO_UINT16(TO_FIXED_14(ahrs.quaternion.element.w));
 	obuf->q[1] = INT16_TO_UINT16(TO_FIXED_14(ahrs.quaternion.element.x));
 	obuf->q[2] = INT16_TO_UINT16(TO_FIXED_14(ahrs.quaternion.element.y));
-	obuf->q[3] = INT16_TO_UINT16(TO_FIXED_10(ahrs.quaternion.element.z));
+	obuf->q[3] = INT16_TO_UINT16(TO_FIXED_14(ahrs.quaternion.element.z));
 	obuf->a[0] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.x));
 	obuf->a[1] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.y));
 	obuf->a[2] = INT16_TO_UINT16(TO_FIXED_10(earth.axis.z));
