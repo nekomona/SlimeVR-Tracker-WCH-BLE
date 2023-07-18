@@ -25,6 +25,7 @@
 #define SENSORS_BMI160SENSOR_H
 
 #include <BMI160.h>
+#include "fusion/FusionClass.h"
 #include <algorithm>
 using namespace std;
 
@@ -77,7 +78,7 @@ constexpr uint16_t BMI160_FIFO_READ_BUFFER_SIZE_BYTES = min(
 // #define BMI160_GYRO_TYPICAL_SENSITIVITY_LSB 65.6f  // 500 deg   2
 // #define BMI160_GYRO_TYPICAL_SENSITIVITY_LSB 131.2f // 250 deg   3 
 // #define BMI160_GYRO_TYPICAL_SENSITIVITY_LSB 262.4f // 125 deg   4
-constexpr double BMI160_GYRO_TYPICAL_SENSITIVITY_LSB = (16.4f * (1 << BMI160_GYRO_RANGE));
+constexpr double BMI160_GYRO_TYPICAL_SENSITIVITY_LSB = (16.384f * (1 << BMI160_GYRO_RANGE));
 
 constexpr std::pair<uint8_t, float> BMI160_ACCEL_SENSITIVITY_LSB_MAP[] = {
     {BMI160_ACCEL_RANGE_2G, 16384.0f},
@@ -86,13 +87,16 @@ constexpr std::pair<uint8_t, float> BMI160_ACCEL_SENSITIVITY_LSB_MAP[] = {
     {BMI160_ACCEL_RANGE_16G, 2048.0f}
 };
 constexpr double BMI160_ACCEL_TYPICAL_SENSITIVITY_LSB = BMI160_ACCEL_SENSITIVITY_LSB_MAP[BMI160_ACCEL_RANGE / 4].second;
-constexpr double BMI160_ASCALE = CONST_EARTH_GRAVITY / BMI160_ACCEL_TYPICAL_SENSITIVITY_LSB;
+constexpr float BMI160_ASCALE = 1.0f / BMI160_ACCEL_TYPICAL_SENSITIVITY_LSB;
 
 // Scale conversion steps: LSB/°/s -> °/s -> step/°/s -> step/rad/s
-constexpr double BMI160_GSCALE = ((32768. / BMI160_GYRO_TYPICAL_SENSITIVITY_LSB) / 32768.) * (PI / 180.0);
+constexpr float BMI160_GSCALE = ((32768. / BMI160_GYRO_TYPICAL_SENSITIVITY_LSB) / 32768.);
 
-constexpr float targetSampleRateMs = 10.0f;
-constexpr uint32_t targetSampleRateMicros = (uint32_t)targetSampleRateMs * 1e3;
+struct BMI160Packet9Axis {
+    int16_t mag[4];
+    int16_t gyro[3];
+    int16_t accel[3];
+};
 
 class BMI160Sensor{
     public:
@@ -102,23 +106,21 @@ class BMI160Sensor{
 
         void motionSetup();
         void motionLoop();
+
+        FusionClass fusion;
     private:
         void readFIFO();
 
         BMI160 imu {};
         uint8_t devid;
 
-        float qwxyz[4] {1.0f, 0.0f, 0.0f, 0.0f};
-
+        // Align to 4 bytes
         struct BMI160FIFO {
-            uint8_t data[BMI160_FIFO_READ_BUFFER_SIZE_BYTES];
+            uint8_t data[BMI160_FIFO_READ_BUFFER_SIZE_BYTES] __aligned(4);
             uint16_t length;
-        } fifo {};
-        float Gxyz[3] = {0};
-        float Axyz[3] = {0};
-        float Mxyz[3] = {0};
-        float lastAxyz[3] = {0};
-        bool fusionUpdated = false;
+        };
+        
+        struct BMI160FIFO fifo;
 };
 
 #endif

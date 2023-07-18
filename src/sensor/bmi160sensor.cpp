@@ -107,14 +107,35 @@ void BMI160Sensor::motionSetup() {
     } else {
         PRINT("Failed to get error register value");
     }
+
+    fusion.setup();
 }
+
+#define FIFO_PACKET_LEN 40
 
 void BMI160Sensor::motionLoop() {
     readFIFO();
+
+    for (int i = 0; i < fifo.length; i += FIFO_PACKET_LEN) {
+        BMI160Packet9Axis *pack = (BMI160Packet9Axis *) &fifo.data[i];
+
+        fusion.mag.axis.x = pack->mag[0];
+        fusion.mag.axis.y = pack->mag[1];
+        fusion.mag.axis.z = pack->mag[2];
+        fusion.gyro.axis.x = pack->gyro[0] * BMI160_GSCALE;
+        fusion.gyro.axis.y = pack->gyro[1] * BMI160_GSCALE;
+        fusion.gyro.axis.z = pack->gyro[2] * BMI160_GSCALE;
+        fusion.accel.axis.x = pack->accel[0] * BMI160_ASCALE;
+        fusion.accel.axis.y = pack->accel[1] * BMI160_ASCALE;
+        fusion.accel.axis.z = pack->accel[2] * BMI160_ASCALE;
+
+        fusion.update();
+    }
 }
 
 void BMI160Sensor::readFIFO() {
     if (!imu.getFIFOCount(&fifo.length)) {
+        fifo.length = 0;
         return;
     }
 
