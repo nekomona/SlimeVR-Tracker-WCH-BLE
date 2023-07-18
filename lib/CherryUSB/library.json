@@ -9,6 +9,7 @@
     ],
     "frameworks": "*",
     "build": {
+        "libArchive": false,
         "flags": [
             "-I ./core",
             "-I ./common",

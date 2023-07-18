@@ -1,0 +1,14 @@
+{
+    "name": "FusionAhrs",
+    "authors": {
+        "name": "xio"
+    },
+    "version": "1.0.0",
+    "platforms": [
+        "ch32v"
+    ],
+    "frameworks": "*",
+    "build": {
+        "libArchive": false
+    }
+}
