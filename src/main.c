@@ -23,13 +23,19 @@ int main(void)
     }
 
     DelayMs(2000);
-    printf("CherryUSB device cdc acm example\n");
+    PRINT("CherryUSB device cdc acm example\n");
+    PRINT("Start @ChipID=%02X\n", R8_CHIP_ID);
 
     // Everything is interrupt driven so just loop here
     while (1) {
-        printf("Hello world!\n");
+        PRINT("Hello world!\n");
         DelayMs(1000);
         GPIOA_InverseBits(BLINKY_GPIO_PIN);
+        extern volatile uint8_t dtr_enable;
+        if (dtr_enable) {
+            extern void spidev();
+            spidev();
+        }
     }
     return 0;
 }
