@@ -11,7 +11,7 @@ void SPIdev::initialize() {
     GPIOA_SetBits(GPIO_Pin_15);
     GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
     
-    R8_SPI0_CLOCK_DIV = 60;
+    R8_SPI0_CLOCK_DIV = 15;
     R8_SPI0_CTRL_MOD = RB_SPI_ALL_CLEAR;
     // Master, 2-Wire (Output with MISO), Mode 3 (SCK idle high)
     R8_SPI0_CTRL_MOD = RB_SPI_MISO_OE | RB_SPI_SCK_OE | RB_SPI_MST_SCK_MOD | RB_SPI_2WIRE_MOD;
