@@ -70,7 +70,11 @@
  CENTRAL_MAX_CONNECTION                     - ����ͬʱ������������ɫ( Ĭ��:3 )
 
  **********************************************************************/
-
+#define DCDC_ENABLE TRUE
+#define HAL_SLEEP TRUE
+#define CLK_OSC32K 0
+#define TEM_SAMPLE FALSE
+#define SLEEP_RTC_MIN_TIME US_TO_RTC(1500)
 /*********************************************************************
  * Ĭ������ֵ
  */
