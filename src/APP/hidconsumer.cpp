@@ -28,7 +28,6 @@
 // HID consumer input report length
 #define HID_CONSUMER_IN_RPT_LEN              20
 
-#include "usbd_core.h"
 #include <SPIdev.h>
 #include "sensor/bmi160sensor.h"
 
